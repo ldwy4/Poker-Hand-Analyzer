@@ -1,11 +1,10 @@
 # Poker Hand Analyzer
 
-## A subtitle
+## 1.0
 
-A *bulleted* list:
-- item 1
-- item 2
-- item 3
-
-An example of text with **bold** and *italic* fonts.  Note that the IntelliJ markdown previewer doesn't seem to render 
-the bold and italic fonts correctly but they will appear correctly on GitHub.
+Features:
+- Allows user to **choose** their hand and opponents or have hands randomly generated
+- Allows user to **view** the odds of their hand of winning
+- Allows user to **choose** what cards get placed on the board or have board cards randomly generated
+- Allows user to **add/remove** players from the table
+- Allows user to **replay** hands (remove cards from board)
