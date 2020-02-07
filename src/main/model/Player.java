@@ -197,7 +197,7 @@ public class Player {
         return name + ": " + firstCard.toString() + " " + secondCard.toString() + " Hand Rank:" + handRank;
     }
 
-    //EFFECTS: print this odds
+    //EFFECTS: returns this odds as String
     public String oddsToString() {
         return this.name + " " + this.odds + "%";
     }
