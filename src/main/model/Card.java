@@ -1,7 +1,7 @@
 package model;
 
 //Card that has value (Ace-King), suit, and position (low, middle, or high card)
-public class Card implements Comparable{
+public class Card implements Comparable {
     private String value;
     private int rawValue;
     private String suit;
@@ -18,13 +18,7 @@ public class Card implements Comparable{
     public Card(String number, String suit) {
         this.value = number;
         this.suit = suit;
-        if (value.equals("T") || value.equals("J") || value.equals("Q") || value.equals("K") || value.equals("A")) {
-            position = "high";
-        } else if (Integer.parseInt(value) <= 9 && Integer.parseInt(value) >= 6) {
-            position = "middle";
-        } else {
-            position = "low";
-        }
+        setPosition(value);
         switch (value) {
             case "T":
                 rawValue = 10;
@@ -43,6 +37,16 @@ public class Card implements Comparable{
                 break;
             default:
                 rawValue = Integer.parseInt(value);
+        }
+    }
+
+    public void setPosition(String v) {
+        if (v.equals("T") || v.equals("J") || v.equals("Q") || v.equals("K") || v.equals("A")) {
+            position = "high";
+        } else if (Integer.parseInt(v) <= 9 && Integer.parseInt(v) >= 6) {
+            position = "middle";
+        } else {
+            position = "low";
         }
     }
 

@@ -75,16 +75,7 @@ public class Player {
     // EFFECT: ranks hand from 0-5
     public void setHandPosition() {
         if (firstCard.getPosition().equals("low")) {
-            switch (secondCard.getPosition()) {
-                case "low":
-                    handPosition = 0;
-                    break;
-                case "middle":
-                    handPosition = 1;
-                    break;
-                case "high":
-                    handPosition = 3;
-            }
+            lowCardHandPosition();
         } else if (firstCard.getPosition().equals("middle")) {
             switch (secondCard.getPosition()) {
                 case "low":
@@ -99,6 +90,19 @@ public class Player {
             }
         } else {
             handPosition = 5;
+        }
+    }
+
+    public void lowCardHandPosition() {
+        switch (secondCard.getPosition()) {
+            case "low":
+                handPosition = 0;
+                break;
+            case "middle":
+                handPosition = 1;
+                break;
+            case "high":
+                handPosition = 3;
         }
     }
 

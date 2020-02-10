@@ -3,9 +3,6 @@ package model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PokerTest {
@@ -205,11 +202,11 @@ public class PokerTest {
         table.getBoardCards().clear();
         table.getBoardCards().add(new Card("A", "C"));
         table.getBoardCards().add(new Card("A", "D"));
-        table.getBoardCards().add(new Card("8", "C"));
-        table.getBoardCards().add(new Card("5", "C"));
+        table.getBoardCards().add(new Card("7", "D"));
+        table.getBoardCards().add(new Card("7", "C"));
         calculator.setHandRankings();
         assertEquals(7, player1.getHankRank());
-        assertEquals(1, player2.getHankRank());
+        assertEquals(6, player2.getHankRank());
         table.getBoardCards().clear();
         table.getBoardCards().add(new Card("6", "C"));
         table.getBoardCards().add(new Card("3", "C"));
@@ -251,7 +248,7 @@ public class PokerTest {
         table.removeCard("2", "S");
         calculator = new EquityCalculator(table.getBoardCards(), table.getPlayers(), table.getDeck());
         calculator.setHandRankings();
-        assertEquals((float)14/44, calculator.countOuts(player2, player1));
+        assertEquals((float)14/44, calculator.getOuts(player2, player1));
     }
 
     @Test

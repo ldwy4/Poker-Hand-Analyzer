@@ -3,7 +3,6 @@ package model;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 
 //Calculates what rank to give each players hand
@@ -73,7 +72,7 @@ public class EquityCalculator {
         } else {
             aheadPlayer = players.get(0);
         }
-        behindPlayer.setOdds(countOuts(behindPlayer, aheadPlayer) * 100);
+        behindPlayer.setOdds(getOuts(behindPlayer, aheadPlayer) * 100);
         for (Player p: players) {
             if (!p.equals(behindPlayer)) {
                 p.setOdds((float)100 - behindPlayer.getOdds()); //TODO: round to two decimals
@@ -91,7 +90,7 @@ public class EquityCalculator {
 
     //MODIFIES: bp, ap
     //EFFECTS: counts the number of cards that will make this player have the winning hand
-    public float countOuts(Player bp, Player ap) {
+    public float getOuts(Player bp, Player ap) {
         ArrayList<Card> handBp = new ArrayList<>();
         ArrayList<Card> handAp = new ArrayList<>();
         int outs = 0;
@@ -105,6 +104,15 @@ public class EquityCalculator {
         handAp.add(ap.getSecondCard());
         int behindHankRank = bp.getHankRank();
         int aheadHankRank = ap.getHankRank();
+        outs = countOuts(handBp, handAp, bp, ap);
+        bp.setHandRank(behindHankRank);
+        ap.setHandRank(aheadHankRank);
+        return outs / (float) deckLeft.size();
+    }
+
+    //EFFECTS: counts the outs for the behind player
+    public int countOuts(ArrayList<Card> handBp, ArrayList<Card> handAp, Player bp, Player ap) {
+        int outs = 0;
         for (Card c: deckLeft) {
             handBp.add(c);
             handAp.add(c);
@@ -122,9 +130,7 @@ public class EquityCalculator {
             handBp.remove(c);
             handAp.remove(c);
         }
-        bp.setHandRank(behindHankRank);
-        ap.setHandRank(aheadHankRank);
-        return outs / (float) deckLeft.size();
+        return outs;
     }
 
     //MODIFIES: p
@@ -167,34 +173,38 @@ public class EquityCalculator {
     //MODIFIES: p
     //EFFECTS: returns true if hand contains straight-flush
     public boolean isStraightFlush(ArrayList<Card> hand, Player p) {
-        ArrayList<ArrayList<Card>> suits = new ArrayList<>();
-        ArrayList<Card> clubCards = new ArrayList<>();
-        ArrayList<Card> spadeCards = new ArrayList<>();
-        ArrayList<Card> heartCards = new ArrayList<>();
-        ArrayList<Card> diamondCards = new ArrayList<>();
-        suits.add(clubCards);
-        suits.add(spadeCards);
-        suits.add(heartCards);
-        suits.add(diamondCards);
-        for (Card c: hand) {
-            switch (c.getSuit()) {
-                case "S":
-                    spadeCards.add(c);
-                    break;
-                case "C":
-                    clubCards.add(c);
-                    break;
-                case "H":
-                    heartCards.add(c);
-                    break;
-                case "D":
-                    diamondCards.add(c);
-            }
-        }
-        for (ArrayList<Card> a: suits) {
-            if (a.size() >= 5) {
-                return isStraight(a, p);
-            }
+//        ArrayList<ArrayList<Card>> suits = new ArrayList<>();
+//        ArrayList<Card> clubCards = new ArrayList<>();
+//        ArrayList<Card> spadeCards = new ArrayList<>();
+//        ArrayList<Card> heartCards = new ArrayList<>();
+//        ArrayList<Card> diamondCards = new ArrayList<>();
+//        suits.add(clubCards);
+//        suits.add(spadeCards);
+//        suits.add(heartCards);
+//        suits.add(diamondCards);
+//        for (Card c: hand) {
+//            switch (c.getSuit()) {
+//                case "S":
+//                    spadeCards.add(c);
+//                    break;
+//                case "C":
+//                    clubCards.add(c);
+//                    break;
+//                case "H":
+//                    heartCards.add(c);
+//                    break;
+//                case "D":
+//                    diamondCards.add(c);
+//            }
+//        }
+        if (suitFlush(hand, p, "S").getValue()) {
+            return isStraight(suitFlush(hand, p, "S").getKey(), p);
+        } else if (suitFlush(hand, p, "D").getValue()) {
+            return isStraight(suitFlush(hand, p, "D").getKey(), p);
+        } else if (suitFlush(hand, p, "H").getValue()) {
+            return isStraight(suitFlush(hand, p, "H").getKey(), p);
+        } else if (suitFlush(hand, p, "C").getValue()) {
+            return isStraight(suitFlush(hand, p, "C").getKey(), p);
         }
         return false;
     }
@@ -223,24 +233,10 @@ public class EquityCalculator {
     //MODIFIES: p
     //EFFECTS: returns true if hand contains a full hull
     public boolean isFullHouse(ArrayList<Card> hand, Player p) {
-        int tripsValue = 0;
-        boolean hasTrips = false;
-        for (int i = 0; i < hand.size(); i++) {
-            for (int j = i + 1; j < hand.size(); j++) {
-                for (int k = j + 1; k < hand.size(); k++) {
-                    int c1 = hand.get(i).getRawValue();
-                    if (c1 == hand.get(j).getRawValue() && c1 == hand.get(k).getRawValue()) {
-                        tripsValue = c1;
-                        hasTrips = true;
-                    }
-                }
-            }
-        }
         for (int i = 0; i < hand.size(); i++) {
             for (int j = i + 1; j < hand.size(); j++) {
                 int c1 = hand.get(i).getRawValue();
-                if (c1 == hand.get(j).getRawValue() && c1 != tripsValue && hasTrips) {
-                    p.setHandValue(tripsValue);
+                if (isTrips(hand, p) && c1 == hand.get(j).getRawValue() && c1 != p.getHandValue()) {
                     p.setKickerValue(c1);
                     return true;
                 }
@@ -252,31 +248,58 @@ public class EquityCalculator {
     //MODIFIES: p
     //EFFECTS: returns true if hand contains a flush
     public boolean isFlush(ArrayList<Card> hand, Player p) {
-        ArrayList<ArrayList<Card>> suits = new ArrayList<>();
-        ArrayList<Card> clubCards = new ArrayList<>();
-        ArrayList<Card> spadeCards = new ArrayList<>();
-        ArrayList<Card> heartCards = new ArrayList<>();
-        ArrayList<Card> diamondCards = new ArrayList<>();
-        suits.add(clubCards);
-        suits.add(spadeCards);
-        suits.add(heartCards);
-        suits.add(diamondCards);
+        if (suitFlush(hand, p, "S").getValue()) {
+            return true;
+        } else if (suitFlush(hand, p, "D").getValue()) {
+            return true;
+        } else if (suitFlush(hand, p, "H").getValue()) {
+            return true;
+        } else if (suitFlush(hand, p, "C").getValue()) {
+            return true;
+        }
+        return false;
+//        ArrayList<ArrayList<Card>> suits = new ArrayList<>();
+//        ArrayList<Card> clubCards = new ArrayList<>();
+//        ArrayList<Card> spadeCards = new ArrayList<>();
+//        ArrayList<Card> heartCards = new ArrayList<>();
+//        ArrayList<Card> diamondCards = new ArrayList<>();
+//        suits.add(clubCards);
+//        suits.add(spadeCards);
+//        suits.add(heartCards);
+//        suits.add(diamondCards);
+//        for (Card c: hand) {
+//            switch (c.getSuit()) {
+//                case "S":
+//                    spadeCards.add(c);
+//                    break;
+//                case "C":
+//                    clubCards.add(c);
+//                    break;
+//                case "H":
+//                    heartCards.add(c);
+//                    break;
+//                case "D":
+//                    diamondCards.add(c);
+//            }
+//        }
+//       return (spadeCards.size() >= 5 || clubCards.size() >= 5 || heartCards.size() >= 5 || diamondCards.size() >= 5);
+    }
+
+    //MODIFIES: p
+    //EFFECTS: returns true if hand contains a flush of clubs
+    public Pair<ArrayList<Card>, Boolean> suitFlush(ArrayList<Card> hand, Player p, String suit) {
+        ArrayList<Card> suits = new ArrayList<>();
         for (Card c: hand) {
-            switch (c.getSuit()) {
-                case "S":
-                    spadeCards.add(c);
-                    break;
-                case "C":
-                    clubCards.add(c);
-                    break;
-                case "H":
-                    heartCards.add(c);
-                    break;
-                case "D":
-                    diamondCards.add(c);
+            if (c.getSuit() == suit) {
+                suits.add(c);
             }
         }
-        return (spadeCards.size() >= 5 || clubCards.size() >= 5 || heartCards.size() >= 5 || diamondCards.size() >= 5);
+        if (suits.size() >= 5) {
+            p.setHandValue(Collections.max(suits).getRawValue());
+            p.setKickerValue(0);
+            return new Pair<>(suits, true);
+        }
+        return new Pair<>(suits, false);
     }
 
     //MODIFIES: p
@@ -284,19 +307,20 @@ public class EquityCalculator {
     public boolean isStraight(ArrayList<Card> hand, Player p) {
         Collections.sort(hand);
         for (int i = 0; i < hand.size(); i++) {
-            int numStraightCards = 0;
+            ArrayList<Card> straightCards = new ArrayList<>();
+            straightCards.add(hand.get(i));
             int value1 = hand.get(i).getRawValue();
             for (int j = i + 1; j < hand.size(); j++) {
                 int value2 = hand.get(j).getRawValue();
                 boolean add = false;
                 if (Math.abs(value1 - value2) == 1) {
                     add = true;
-                    numStraightCards++;
+                    straightCards.add(hand.get(j));
                     value1 = value2;
                 }
             }
-            if (numStraightCards >= 4) {
-                p.setHandValue(Collections.max(hand).getRawValue());
+            if (straightCards.size() >= 5) {
+                p.setHandValue(Collections.max(straightCards).getRawValue());
                 p.setKickerValue(0);
                 return true;
             }
@@ -325,26 +349,25 @@ public class EquityCalculator {
     //MODIFIES: p
     //EFFECTS: returns true if hand contains two pair
     public boolean isTwoPair(ArrayList<Card> hand, Player p) {
-        int valuePair1 = 0;
-        ArrayList<Integer> pair2 = new ArrayList<>();
-        for (int i = 0; i < hand.size(); i++) {
-            for (int j = i + 1; j < hand.size(); j++) {
-                int c1 = hand.get(i).getRawValue();
-                if (c1 == hand.get(j).getRawValue()) {
-                    valuePair1 = c1;
-                }
-            }
-        }
+//        int valuePair1 = 0;
+//        ArrayList<Integer> pair2 = new ArrayList<>();
+//        for (int i = 0; i < hand.size(); i++) {
+//            for (int j = i + 1; j < hand.size(); j++) {
+//                int c1 = hand.get(i).getRawValue();
+//                if (c1 == hand.get(j).getRawValue()) {
+//                    valuePair1 = c1;
+//                }
+//            }
+//        }
         for (int i = 0; i < hand.size(); i++) {
             for (int j = i + 1; j < hand.size(); j++) {
                 int c2 = hand.get(i).getRawValue();
-                if (c2 == hand.get(j).getRawValue() && c2 != valuePair1) {
-                    if (valuePair1 > c2) {
-                        p.setHandValue(valuePair1);
+                if (isPair(hand, p) && c2 != p.getHandValue() && c2 == hand.get(j).getRawValue()) {
+                    if (p.getHandValue() > c2) {
                         p.setKickerValue(c2);
                     } else {
+                        p.setKickerValue(p.getHandValue());
                         p.setHandValue(c2);
-                        p.setKickerValue(valuePair1);
                     }
                     return true;
                 }

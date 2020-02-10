@@ -76,13 +76,14 @@ public class InfoManager {
         handOptions();
     }
 
+    //MODIFIES: user, table
     // EFFECTS: asks user to input hand and sets user hand to inputed values
     private void chooseHand() {
         System.out.println("Type in Cards to add (i.e. 9D, AC):");
         String str = getUserInputString();
         if (str.length() == 5) {
             String[] cards = str.split("\\s+");
-            try {
+            if (cards.length == 3) {
                 for (int i = 0; i < 2; i++) {
                     String card = cards[i].toUpperCase();
                     String value = Character.toString(card.charAt(0));
@@ -98,30 +99,8 @@ public class InfoManager {
                         }
                     }
                 }
-            } catch (Exception e) {
-                System.out.println("Invalid input");
             }
-//        System.out.println("What numbers do you want? Enter two with space between(2-9,T,J,Q,K,A)");
-//        String str = getUserInputString();
-//        if (str.length() > 2) {
-//            String[] cards = str.split("\\s+");
-//            String cardValue1 = cards[0].toUpperCase();
-//            String cardValue2 = cards[1].toUpperCase();
-//            System.out.println("What suits?(S,C,D,H)");
-//            str = getUserInputString();
-//            if (str.length() > 2) {
-//                String[] suits = str.split("\\s+");
-//                String suit1 = suits[0].toUpperCase();
-//                String suit2 = suits[1].toUpperCase();
-//                boolean valid1 = table.validCard(cardValue1, suit1);
-//                boolean valid2 = table.validCard(cardValue2, suit2);
-//                if (valid1 && valid2) {
-//                    user.setHand(cardValue1, cardValue2, suit1, suit2);
-//                    table.removeCard(cardValue1, suit1);
-//                    table.removeCard(cardValue2, suit2);
-//                    chooseOpponentHand();
-//                }
-//            }
+            System.out.println("Invalid input");
         }
     }
 
@@ -199,7 +178,6 @@ public class InfoManager {
             switch (str) {
                 case "next":
                     autoFlop();
-                    handOptions();
                     break;
                 case "new":
                     reset();
@@ -207,15 +185,12 @@ public class InfoManager {
                     break;
                 case "add":
                     manualFlop();
-                    handOptions();
                     break;
                 case "change":
                     chooseCardChange();
-                    handOptions();
                     break;
                 default:
-                    boardCards.clear();
-                    printInstructions();
+                    handOptions();
             }
         }
     }
@@ -232,29 +207,25 @@ public class InfoManager {
                 done = false;
             }
         }
+        handOptions();
     }
 
     private boolean findCardChange(String change) {
         switch (change) {
             case "user":
                 newHand(user);
-                printPreFlopOdds();
                 return true;
             case "opponent":
                 newHand(opponent);
-                printPreFlopOdds();
                 return true;
             case "flop":
                 changeBoard(3);
-                printPostFlopOdds();
                 return true;
             case "turn":
                 changeBoard(4);
-                printPostFlopOdds();
                 return true;
             case "river":
                 changeBoard(5);
-                printPostFlopOdds();
                 return true;
             default:
                 return false;
@@ -273,6 +244,7 @@ public class InfoManager {
         } else {
             chooseOpponentHand();
         }
+        printPreFlopOdds();
     }
 
     //MODIFIES: table
@@ -299,6 +271,7 @@ public class InfoManager {
         } else {
             changePostFlop(position);
         }
+        printPostFlopOdds();
     }
 
     //EFFECTS: changes turn or river card based on given position
@@ -324,6 +297,7 @@ public class InfoManager {
             System.out.println("Board is full");
         }
         printPostFlopOdds();
+        handOptions();
     }
 
     //EFFECTS: asks user to manually enter a card to add to the board
@@ -336,6 +310,7 @@ public class InfoManager {
             System.out.println("Board is full");
         }
         printPostFlopOdds();
+        handOptions();
     }
 
     //EFFECTS: prints the odds of each player at the table
