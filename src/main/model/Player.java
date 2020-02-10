@@ -1,5 +1,6 @@
 package model;
 
+//Represents player at table, has hand of two cards, hand rank, and the odds associated with their hand
 public class Player {
     private String name;
     private Card firstCard;
@@ -8,10 +9,20 @@ public class Player {
     private float odds;
     private int handPosition; // 0-5 , 0=low/low, 1=mid/low, 2=mid/mid, 3=high/low, 4=high/mid, 5=high/high
     private int handRank; //0-10; High Card - Royal Flush
+    private int handValue; //value of high card in hand made
+    private int kickerValue; //value of card in player hand that is not in total hand
 
     public Player(String name) {
         this.name = name;
         odds = (float)50;
+    }
+
+    public int getKickerValue() {
+        return kickerValue;
+    }
+
+    public void setKickerValue(int kickerValue) {
+        this.kickerValue = kickerValue;
     }
 
     public void setHandRank(int handRank) {
@@ -21,6 +32,16 @@ public class Player {
     public int getHankRank() {
         return this.handRank;
     }
+
+
+    public int getHandValue() {
+        return handValue;
+    }
+
+    public void setHandValue(int handValue) {
+        this.handValue = handValue;
+    }
+
 
     public Card getFirstCard() {
         return firstCard;
@@ -48,7 +69,7 @@ public class Player {
             isPair = false;
             handRank = 0;
         }
-        setHandPosition();
+        this.setHandPosition();
     }
 
     // EFFECT: ranks hand from 0-5
@@ -63,7 +84,6 @@ public class Player {
                     break;
                 case "high":
                     handPosition = 3;
-                    break;
             }
         } else if (firstCard.getPosition().equals("middle")) {
             switch (secondCard.getPosition()) {
@@ -82,6 +102,21 @@ public class Player {
         }
     }
 
+//    public boolean isLowPosition(String pos) {
+//        switch (secondCard.getPosition()) {
+//            case "low":
+//                handPosition = 0;
+//                return true;
+//            case "middle":
+//                handPosition = 1;
+//                return true;
+//            case "high":
+//                handPosition = 3;
+//                return true;
+//        }
+//        return false;
+//    }
+
     public boolean getIsPair() {
         return isPair;
     }
@@ -94,9 +129,9 @@ public class Player {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+//    public void setName(String name) {
+//        this.name = name;
+//    }
 
     public float getOdds() {
         return odds;
@@ -117,6 +152,13 @@ public class Player {
 
     // EFFECTS: checks if hand is paired and changes each players odds
     public boolean checkPairs(Player other) {
+        if (this.bothPair(other) || this.onePair(other)) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean bothPair(Player other) {
         Card p1c1 = this.getFirstCard();
         Card p2c1 = other.getFirstCard();
         if (this.isPair && other.getIsPair()) {
@@ -130,7 +172,13 @@ public class Player {
                 this.odds = 100 - 82;
                 other.setOdds(100 - this.odds);
             }
-        } else if (this.isPair && !other.getIsPair()) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean onePair(Player other) {
+        if (this.isPair && !other.getIsPair()) {
             if (other.getHandPosition() > 3) {
                 this.odds = 55;
                 other.setOdds(100 - this.odds);
@@ -138,16 +186,18 @@ public class Player {
                 other.setOdds(30 / ((float)3 / ((other.getHandPosition()) + 1)));
                 this.odds = 100 - other.getOdds();
             }
+            return true;
         } else if (other.getIsPair() && !this.isPair) {
             if (this.getHandPosition() > 3) {
                 other.odds = 55;
                 this.setOdds(100 - other.getOdds());
             } else {
-                this.odds = (30 / ((float)3 / (this.handPosition + 1)));
+                this.odds = (30 / ((float) 3 / (this.handPosition + 1)));
                 other.setOdds(100 - this.odds);
             }
+            return true;
         }
-        return (this.isPair || other.getIsPair());
+        return false;
     }
 
     //EFFECTS: compares card raw value of each hand
@@ -160,13 +210,13 @@ public class Player {
         int p2HighCard = Integer.max(p2c1.getRawValue(), p2c2.getRawValue());
         float oddsChange = 15 + 4 * (Math.abs(p1HighCard - p2HighCard) / (float)12);
         if (p1HighCard - p2HighCard > 0) {
-            this.setOdds(this.getOdds() + oddsChange);
-            other.setOdds(other.getOdds() - oddsChange);
+            this.setOdds(50 + oddsChange);
+            other.setOdds(50 - oddsChange);
         } else if (p1HighCard - p2HighCard < 0) {
-            this.setOdds(this.getOdds() - oddsChange);
-            other.setOdds(other.getOdds() + oddsChange);
+            this.setOdds(50 - oddsChange);
+            other.setOdds(50 + oddsChange);
         } else {
-            compareLowCard(other);
+            this.compareLowCard(other);
         }
     }
 
@@ -181,20 +231,18 @@ public class Player {
         int p2LowCard = Integer.min(p2c1.getRawValue(), p2c2.getRawValue());
         float oddsChange = 15 + 8 * (Math.abs(p1LowCard - p2LowCard) / (float)12);
         if (p1LowCard - p2LowCard > 0) {
-            this.setOdds(this.getOdds() + oddsChange);
-            other.setOdds(other.getOdds() - oddsChange);
+            this.setOdds(50 + oddsChange);
+            other.setOdds(50 - oddsChange);
         } else if (p1LowCard - p2LowCard < 0) {
-            this.setOdds(this.getOdds() - oddsChange);
-            other.setOdds(other.getOdds() + oddsChange);
-        } else {
-            compareLowCard(other);
+            this.setOdds(50 - oddsChange);
+            other.setOdds(50 + oddsChange);
         }
     }
 
     @Override
     //EFFECTS: returns string of cards in players hand
     public String toString() {
-        return name + ": " + firstCard.toString() + " " + secondCard.toString() + " Hand Rank:" + handRank;
+        return name + ": " + firstCard.toString() + " " + secondCard.toString() + " Odds: " + this.oddsToString();
     }
 
     //EFFECTS: returns this odds as String

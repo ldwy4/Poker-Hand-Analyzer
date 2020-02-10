@@ -1,6 +1,7 @@
 package model;
 
-public class Card {
+//Card that has value (Ace-King), suit, and position (low, middle, or high card)
+public class Card implements Comparable{
     private String value;
     private int rawValue;
     private String suit;
@@ -10,9 +11,9 @@ public class Card {
         return position;
     }
 
-    public void setPosition(String position) {
-        this.position = position;
-    }
+//    public void setPosition(String position) {
+//        this.position = position;
+//    }
 
     public Card(String number, String suit) {
         this.value = number;
@@ -53,40 +54,43 @@ public class Card {
         return value;
     }
 
-    public void setValue(String value) {
-        this.value = value;
-    }
+//    public void setValue(String value) {
+//        this.value = value;
+//    }
 
     public String getSuit() {
         return suit;
     }
 
-    public void setSuit(String suit) {
-        this.suit = suit;
-    }
+//    public void setSuit(String suit) {
+//        this.suit = suit;
+//    }
 
-    //EFFECTS: returns true if other card is same suit as this
-    public boolean isSuited(Card other) {
-        return false;
-    }
 
     @Override
     public String toString() {
-        char symbol = 'l';
+        String symbol = "";
         switch (suit) {
             case "S":
-                symbol = '\u2660';
+                symbol = "♠";
                 break;
             case "C":
-                symbol = '\u2663';
+                symbol = "♣";
                 break;
             case "D":
-                symbol = '\u2666';
+                symbol = "♦";
                 break;
             case "H":
-                symbol = '\u2764';
+                symbol = "❤";
                 break;
         }
-        return this.value.toUpperCase() + Character.toString(symbol);
+        return this.value.toUpperCase() + symbol;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        Card c2 = (Card) o;
+        int value = c2.getRawValue();
+        return this.getRawValue() - value;
     }
 }

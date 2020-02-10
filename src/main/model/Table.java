@@ -2,6 +2,7 @@ package model;
 
 import java.util.ArrayList;
 
+//Table contains all players and cards on the table, as well as cards left in the deck
 public class Table {
     private int numPlayers;
     private ArrayList<Player> players;
@@ -79,6 +80,42 @@ public class Table {
         return board;
     }
 
+    //REQUIRES: card to be a valid card
+    //EFFECTS: returns card with given value and suit
+    public Card addCard(String cv, String s) {
+        Card foundCard = new Card(cv, s); //dummy
+        for (Card c: this.deck) {
+            if (c.getValue().equals(cv) && c.getSuit().equals(s)) {
+                foundCard = c;
+                this.deck.remove(c);
+                this.usedCards.add(c);
+                break;
+            }
+        }
+        return foundCard;
+    }
+
+    // EFFECTS: removes card from deck once dealt
+    public void removeCard(String cv, String s) {
+        for (Card c: this.deck) {
+            if (c.getValue().equals(cv) && c.getSuit().equals(s)) {
+                this.deck.remove(c);
+                this.usedCards.add(c);
+                break;
+            }
+        }
+    }
+
+    // EFFECT: produces true if card is a valid card
+    public boolean validCard(String cv, String s) {
+        for (Card c: deck) {
+            if (c.getValue().equals(cv) && c.getSuit().equals(s)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public ArrayList<Card> getBoardCards() {
         return boardCards;
     }
@@ -90,6 +127,14 @@ public class Table {
 
     public ArrayList<Card> getUsedCards() {
         return usedCards;
+    }
+
+    public String postFlopTableOdds() {
+        String tableOdds = "";
+        for (Player p: players) {
+            tableOdds += p.toString() + "\n";
+        }
+        return tableOdds;
     }
 
 //    public void setUsedCards(ArrayList<Card> usedCards) {

@@ -21,16 +21,8 @@ public class InfoManager {
     ArrayList<Card> boardCards;
     EquityCalculator equityCalculator;
 
-    public InfoManager(Table table) {
-        input = new Scanner(System.in);
-        runProgram = true;
-        this.table = table;
-        user = table.getPlayers().get(0);
-        opponent = table.getPlayers().get(1);
-        deck = table.getDeck();
-        usedCards = table.getUsedCards();
-        boardCards = table.getBoardCards();
-        equityCalculator = new EquityCalculator(boardCards, table.getPlayers(), deck);
+    public InfoManager() {
+        reset();
     }
 
     //EFFECTS: parses user input until user quits
@@ -60,19 +52,11 @@ public class InfoManager {
             switch (str) {
                 case "yes":
                     chooseHand();
-                    System.out.println(user.toString());
-                    System.out.println(opponent.toString());
-                    handOptions();
+                    printPreFlopOdds();
                     break;
                 case "no":
-                    try {
-                        randomHand();
-                        System.out.println(user.toString());
-                        System.out.println(opponent.toString());
-                    } catch (Exception e) {
-                        System.out.println("Ran out of Cards");
-                    }
-                    handOptions();
+                    randomHand();
+                    printPreFlopOdds();
                     break;
                 case QUIT_COMMAND:
                     runProgram = false;
@@ -85,29 +69,59 @@ public class InfoManager {
         }
     }
 
+    private void printPreFlopOdds() {
+        table.tableOdds();
+        System.out.println(user.toString());
+        System.out.println(opponent.toString());
+        handOptions();
+    }
+
     // EFFECTS: asks user to input hand and sets user hand to inputed values
     private void chooseHand() {
-        System.out.println("What numbers do you want? Enter two with space between(2-9,T,J,Q,K,A)");
+        System.out.println("Type in Cards to add (i.e. 9D, AC):");
         String str = getUserInputString();
-        if (str.length() > 2) {
+        if (str.length() == 5) {
             String[] cards = str.split("\\s+");
-            String cardValue1 = cards[0].toUpperCase();
-            String cardValue2 = cards[1].toUpperCase();
-            System.out.println("What suits?(S,C,D,H)");
-            str = getUserInputString();
-            if (str.length() > 2) {
-                String[] suits = str.split("\\s+");
-                String suit1 = suits[0].toUpperCase();
-                String suit2 = suits[1].toUpperCase();
-                boolean valid1 = validCard(cardValue1, suit1);
-                boolean valid2 = validCard(cardValue2, suit2);
-                if (valid1 && valid2) {
-                    user.setHand(cardValue1, cardValue2, suit1, suit2);
-                    removeCard(cardValue1, suit1);
-                    removeCard(cardValue2, suit2);
-                    chooseOpponentHand();
+            try {
+                for (int i = 0; i < 2; i++) {
+                    String card = cards[i].toUpperCase();
+                    String value = Character.toString(card.charAt(0));
+                    String suit = Character.toString(card.charAt(1));
+                    if (table.validCard(value, suit)) {
+                        if (user.getFirstCard() == null) {
+                            user.setFirstCard(table.addCard(value, suit));
+                        } else {
+                            user.setSecondCard(table.addCard(value, suit));
+                        }
+                        if (opponent.getFirstCard() == null) {
+                            chooseOpponentHand();
+                        }
+                    }
                 }
+            } catch (Exception e) {
+                System.out.println("Invalid input");
             }
+//        System.out.println("What numbers do you want? Enter two with space between(2-9,T,J,Q,K,A)");
+//        String str = getUserInputString();
+//        if (str.length() > 2) {
+//            String[] cards = str.split("\\s+");
+//            String cardValue1 = cards[0].toUpperCase();
+//            String cardValue2 = cards[1].toUpperCase();
+//            System.out.println("What suits?(S,C,D,H)");
+//            str = getUserInputString();
+//            if (str.length() > 2) {
+//                String[] suits = str.split("\\s+");
+//                String suit1 = suits[0].toUpperCase();
+//                String suit2 = suits[1].toUpperCase();
+//                boolean valid1 = table.validCard(cardValue1, suit1);
+//                boolean valid2 = table.validCard(cardValue2, suit2);
+//                if (valid1 && valid2) {
+//                    user.setHand(cardValue1, cardValue2, suit1, suit2);
+//                    table.removeCard(cardValue1, suit1);
+//                    table.removeCard(cardValue2, suit2);
+//                    chooseOpponentHand();
+//                }
+//            }
         }
     }
 
@@ -133,75 +147,202 @@ public class InfoManager {
         }
     }
 
-    // EFFECT: produces true if card is a valid card
-    private boolean validCard(String cv, String s) {
-        for (int i = 0; i <= 12; i++) {
-            if (deck.get(i).getValue().equals(cv)) {
-                return (s.equals("S") || s.equals("H") || s.equals("D") || s.equals("C"));
-            }
-        }
-        return false;
-    }
-
     private void chooseOpponentHand() {
-        System.out.println("Input opponents hand. With space between");
+        System.out.println("Type in Cards to add (i.e. 9D, AC):");
         String str = getUserInputString();
-        if (str.length() > 2) {
+        if (str.length() == 5) {
             String[] cards = str.split("\\s+");
-            String cardValue1 = cards[0].toUpperCase();
-            String cardValue2 = cards[1].toUpperCase();
-            System.out.println("What suits?(S,C,D,H)");
-            str = getUserInputString();
-            if (str.length() > 2) {
-                String[] suits = str.split("\\s+");
-                String suit1 = suits[0].toUpperCase();
-                String suit2 = suits[1].toUpperCase();
-                boolean valid1 = validCard(cardValue1, suit1);
-                boolean valid2 = validCard(cardValue2, suit2);
-                if (valid1 && valid2) {
-                    opponent.setHand(cardValue1, cardValue2, suit1, suit2);
-                    removeCard(cardValue1, suit1);
-                    removeCard(cardValue2, suit2);
+            try {
+                for (int i = 0; i < 2; i++) {
+                    String card = cards[i].toUpperCase();
+                    String value = Character.toString(card.charAt(0));
+                    String suit = Character.toString(card.charAt(1));
+                    if (table.validCard(value, suit)) {
+                        if (opponent.getFirstCard() == null) {
+                            opponent.setFirstCard(table.addCard(value, suit));
+                        } else {
+                            opponent.setSecondCard(table.addCard(value, suit));
+                        }
+                    }
                 }
+            } catch (Exception e) {
+                System.out.println("Please enter 2 cards (i.e. 9D, AC)");
             }
+//        System.out.println("Input opponents hand. With space between");
+//        String str = getUserInputString();
+//        if (str.length() > 2) {
+//            String[] cards = str.split("\\s+");
+//            String cardValue1 = cards[0].toUpperCase();
+//            String cardValue2 = cards[1].toUpperCase();
+//            System.out.println("What suits?(S,C,D,H)");
+//            str = getUserInputString();
+//            if (str.length() > 2) {
+//                String[] suits = str.split("\\s+");
+//                String suit1 = suits[0].toUpperCase();
+//                String suit2 = suits[1].toUpperCase();
+//                boolean valid1 = table.validCard(cardValue1, suit1);
+//                boolean valid2 = table.validCard(cardValue2, suit2);
+//                if (valid1 && valid2) {
+//                    opponent.setHand(cardValue1, cardValue2, suit1, suit2);
+//                    table.removeCard(cardValue1, suit1);
+//                    table.removeCard(cardValue2, suit2);
+//                }
+//            }
         }
     }
 
-    // EFFECTS: removes card from deck once dealt
-    public void removeCard(String cv, String s) {
-        for (Card c: deck) {
-            if (c.getValue().equals(cv) && c.getSuit().equals(s)) {
-                deck.remove(c);
-                usedCards.add(c);
-                break;
-            }
-        }
-    }
-
-    // EFFECTS: prints options for users hand depending on input
+    //EFFECTS: prints options for users hand depending on input
     public void handOptions() {
-        System.out.println("What do you want to do?");
+        System.out.println("What do you want to do?\nOptions: odds, next, add, new, change");
         String str = getUserInputString();
         if (str.length() > 0) {
             switch (str) {
-                case "odds":
-                    table.tableOdds();
-                    System.out.println(user.oddsToString());
-                    System.out.println(opponent.oddsToString());
+                case "next":
+                    autoFlop();
+                    handOptions();
                     break;
-                case "flop":
-                    try {
-                        addToBoard(3);
-                        System.out.println(table.boardCardsToString());
-                    } catch (Exception e) {
-                        System.out.println("Ran out of Cards");
-                    }
-                    //table.tableOdds();
+                case "new":
+                    reset();
+                    printInstructions();
+                    break;
+                case "add":
+                    manualFlop();
+                    handOptions();
+                    break;
+                case "change":
+                    chooseCardChange();
+                    handOptions();
+                    break;
                 default:
                     boardCards.clear();
                     printInstructions();
             }
         }
+    }
+
+    private void chooseCardChange() {
+        boolean done = true;
+        while (done) {
+            System.out.println("What card(s) do you want to change?\n(user, opponent, flop, turn, river)");
+            String str = getUserInputString();
+            if (str.length() > 0) {
+                done = !findCardChange(str);
+            }
+            if (str.equals("quit")) {
+                done = false;
+            }
+        }
+    }
+
+    private boolean findCardChange(String change) {
+        switch (change) {
+            case "user":
+                newHand(user);
+                printPreFlopOdds();
+                return true;
+            case "opponent":
+                newHand(opponent);
+                printPreFlopOdds();
+                return true;
+            case "flop":
+                changeBoard(3);
+                printPostFlopOdds();
+                return true;
+            case "turn":
+                changeBoard(4);
+                printPostFlopOdds();
+                return true;
+            case "river":
+                changeBoard(5);
+                printPostFlopOdds();
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    //MODIFIES: p
+    //EFFECTS: allows user to enter new hand for given player
+    public void newHand(Player p) {
+        deck.add(p.getFirstCard());
+        deck.add(p.getSecondCard());
+        usedCards.remove(p.getFirstCard());
+        usedCards.remove(p.getSecondCard());
+        if (p.getName() == "user") {
+            chooseHand();
+        } else {
+            chooseOpponentHand();
+        }
+    }
+
+    //MODIFIES: table
+    //EFFECTS: changes hand of given player
+    public void changeBoard(int position) {
+        System.out.println("Enter new cards");
+        if (position == 3) {
+            String str = getUserInputString();
+            for (int i = 0; i < 3; i++) {
+                Card c = boardCards.get(i);
+                deck.add(c);
+                usedCards.remove(c);
+            }
+            String[] cards = str.split("\\s+");
+
+            for (int i = 0; i < position; i++) {
+                String card = cards[i].toUpperCase();
+                String value = Character.toString(card.charAt(0));
+                String suit = Character.toString(card.charAt(1));
+                if (table.validCard(value, suit)) {
+                    boardCards.set(i, table.addCard(value, suit));
+                }
+            }
+        } else {
+            changePostFlop(position);
+        }
+    }
+
+    //EFFECTS: changes turn or river card based on given position
+    public void changePostFlop(int position) {
+        String str = getUserInputString().toUpperCase();
+        Card c = boardCards.get(position - 1);
+        deck.add(c);
+        usedCards.remove(c);
+        String value = Character.toString(str.charAt(0));
+        String suit = Character.toString(str.charAt(1));
+        if (table.validCard(value, suit)) {
+            boardCards.set(position - 1, table.addCard(value, suit));
+        }
+    }
+
+    //EFFECTS: automatically draws a card from the deck and adds it to the board
+    public void autoFlop() {
+        if (boardCards.size() == 0) {
+            addToBoard(3);
+        } else if (boardCards.size() < 5) {
+            addToBoard(1);
+        } else {
+            System.out.println("Board is full");
+        }
+        printPostFlopOdds();
+    }
+
+    //EFFECTS: asks user to manually enter a card to add to the board
+    public void manualFlop() {
+        if (boardCards.size() == 0) {
+            manualAddToBoard(3);
+        } else if (boardCards.size() < 5) {
+            manualAddToBoard(1);
+        } else {
+            System.out.println("Board is full");
+        }
+        printPostFlopOdds();
+    }
+
+    //EFFECTS: prints the odds of each player at the table
+    private void printPostFlopOdds() {
+        System.out.println(table.boardCardsToString());
+        equityCalculator.setHandRankings();
+        System.out.println(table.postFlopTableOdds());
     }
 
     //EFFECTS: randomly generates the flop (3 cards are added to board cards)
@@ -213,6 +354,27 @@ public class InfoManager {
             usedCards.add(deck.get(seed));
             deck.remove(seed);
             i++;
+        }
+    }
+
+    //EFFECTS: Allows player to add to board
+    public void manualAddToBoard(int numCards) {
+        System.out.println("Type in Cards to add (i.e. 9D, AC):");
+        String str = getUserInputString();
+        if (str.length() >= numCards * 2) {
+            String[] cards = str.split("\\s+");
+            try {
+                for (int i = 0; i < numCards; i++) {
+                    String card = cards[i].toUpperCase();
+                    String value = Character.toString(card.charAt(0));
+                    String suit = Character.toString(card.charAt(1));
+                    if (table.validCard(value, suit)) {
+                        boardCards.add(table.addCard(value, suit));
+                    }
+                }
+            } catch (Exception e) {
+                System.out.println("Please enter " + numCards + "cards (i.e. 9D, AC)");
+            }
         }
     }
 
@@ -233,5 +395,17 @@ public class InfoManager {
         return str;
     }
 
+    //EFFECTS: creates a new table with new players and deck
+    private void reset() {
+        input = new Scanner(System.in);
+        runProgram = true;
+        user = new Player("user");
+        opponent = new Player("opponent");
+        table = new Table(user, opponent);
+        deck = table.getDeck();
+        usedCards = table.getUsedCards();
+        boardCards = table.getBoardCards();
+        equityCalculator = new EquityCalculator(boardCards, table.getPlayers(), deck);
+    }
 
 }
