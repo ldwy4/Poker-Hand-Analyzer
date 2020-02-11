@@ -59,6 +59,9 @@ public class Player {
         this.secondCard = secondCard;
     }
 
+    //REQUIRES: cv1, cv2 valid card values and s1, s2 valid card suits
+    //MODIFIES: this
+    //EFFECTS: sets player hand to cards with given values with given suits
     public void setHand(String cv1, String cv2, String s1, String s2) {
         this.firstCard = new Card(cv1, s1);
         this.secondCard = new Card(cv2, s2);
@@ -93,7 +96,6 @@ public class Player {
         }
     }
 
-    //REQUIRE: firstCard.position == "low"
     //MODIFIES: this
     //EFFECTS: determines hand position based on second card position
     public void lowCardHandPosition() {
@@ -109,20 +111,6 @@ public class Player {
         }
     }
 
-//    public boolean isLowPosition(String pos) {
-//        switch (secondCard.getPosition()) {
-//            case "low":
-//                handPosition = 0;
-//                return true;
-//            case "middle":
-//                handPosition = 1;
-//                return true;
-//            case "high":
-//                handPosition = 3;
-//                return true;
-//        }
-//        return false;
-//    }
 
     public boolean getIsPair() {
         return isPair;
@@ -135,10 +123,6 @@ public class Player {
     public String getName() {
         return name;
     }
-
-//    public void setName(String name) {
-//        this.name = name;
-//    }
 
     public float getOdds() {
         return odds;
@@ -165,6 +149,8 @@ public class Player {
         return false;
     }
 
+    //MODIFIES: this, other
+    //EFFECTS: if both players have a pair, sets odds of each player based on their pair value
     public boolean bothPair(Player other) {
         Card p1c1 = this.getFirstCard();
         Card p2c1 = other.getFirstCard();
@@ -184,6 +170,8 @@ public class Player {
         return false;
     }
 
+    //MODIFIES: this, other
+    //EFFECTS: if only one player has a pair, sets odds of each player based on that pair value
     public boolean onePair(Player other) {
         if (this.isPair && !other.getIsPair()) {
             if (other.getHandPosition() > 3) {
@@ -207,7 +195,8 @@ public class Player {
         return false;
     }
 
-    //EFFECTS: compares card raw value of each hand
+    //MODIFIES: this, other
+    //EFFECTS: compares card raw value of each hand and changes odds depending on the difference in values
     public void compareHighCard(Player other) {
         Card p1c1 = this.getFirstCard();
         Card p1c2 = this.getSecondCard();

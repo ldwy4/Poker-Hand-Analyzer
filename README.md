@@ -9,7 +9,8 @@ So I decided that I would make something which could be useful for both beginner
 I think any person that's interested in poker or in probability would be someone who could you this application.
 
 Features:
-- Allows user to **choose** their hand and opponents or have hands randomly generated
+- Allows user to **add** cards to their hand and/or opponents or have hands randomly generated
+- Allows user to **change** their hand and/or their opponents hand
 - Allows user to **view** the odds of their hand of winning
+- Allows user to **add** cards to the table
 - Allows user to **choose** what cards get placed on the board or have board cards randomly generated
-- Allows user to **add/remove** cards from the table
