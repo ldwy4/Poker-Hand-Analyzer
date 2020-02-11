@@ -68,6 +68,7 @@ public class InfoManager {
         }
     }
 
+    //EFFECTS: prints odds before cards are on the board
     private void printPreFlopOdds() {
         table.tableOdds();
         System.out.println(user.toString());
@@ -125,6 +126,7 @@ public class InfoManager {
         }
     }
 
+    //EFFECTS: choose opponents hand
     private void chooseOpponentHand() {
         System.out.println("Type in Cards to add (i.e. 9D, AC):");
         String str = getUserInputString();
@@ -146,26 +148,6 @@ public class InfoManager {
             } catch (Exception e) {
                 System.out.println("Please enter 2 cards (i.e. 9D, AC)");
             }
-//        System.out.println("Input opponents hand. With space between");
-//        String str = getUserInputString();
-//        if (str.length() > 2) {
-//            String[] cards = str.split("\\s+");
-//            String cardValue1 = cards[0].toUpperCase();
-//            String cardValue2 = cards[1].toUpperCase();
-//            System.out.println("What suits?(S,C,D,H)");
-//            str = getUserInputString();
-//            if (str.length() > 2) {
-//                String[] suits = str.split("\\s+");
-//                String suit1 = suits[0].toUpperCase();
-//                String suit2 = suits[1].toUpperCase();
-//                boolean valid1 = table.validCard(cardValue1, suit1);
-//                boolean valid2 = table.validCard(cardValue2, suit2);
-//                if (valid1 && valid2) {
-//                    opponent.setHand(cardValue1, cardValue2, suit1, suit2);
-//                    table.removeCard(cardValue1, suit1);
-//                    table.removeCard(cardValue2, suit2);
-//                }
-//            }
         }
     }
 
@@ -200,6 +182,7 @@ public class InfoManager {
         runProgram = false;
         endProgram();
     }
+
     private void chooseCardChange() {
         boolean done = true;
         while (done) {
