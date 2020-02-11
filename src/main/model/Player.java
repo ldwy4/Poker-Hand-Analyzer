@@ -93,6 +93,9 @@ public class Player {
         }
     }
 
+    //REQUIRE: firstCard.position == "low"
+    //MODIFIES: this
+    //EFFECTS: determines hand position based on second card position
     public void lowCardHandPosition() {
         switch (this.secondCard.getPosition()) {
             case "low":
