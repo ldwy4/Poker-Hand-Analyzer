@@ -349,26 +349,12 @@ public class EquityCalculator {
     //MODIFIES: p
     //EFFECTS: returns true if hand contains two pair
     public boolean isTwoPair(ArrayList<Card> hand, Player p) {
-//        int valuePair1 = 0;
-//        ArrayList<Integer> pair2 = new ArrayList<>();
-//        for (int i = 0; i < hand.size(); i++) {
-//            for (int j = i + 1; j < hand.size(); j++) {
-//                int c1 = hand.get(i).getRawValue();
-//                if (c1 == hand.get(j).getRawValue()) {
-//                    valuePair1 = c1;
-//                }
-//            }
-//        }
         for (int i = 0; i < hand.size(); i++) {
             for (int j = i + 1; j < hand.size(); j++) {
                 int c2 = hand.get(i).getRawValue();
                 if (isPair(hand, p) && c2 != p.getHandValue() && c2 == hand.get(j).getRawValue()) {
-                    if (p.getHandValue() > c2) {
-                        p.setKickerValue(c2);
-                    } else {
-                        p.setKickerValue(p.getHandValue());
-                        p.setHandValue(c2);
-                    }
+                    p.setKickerValue(p.getHandValue());
+                    p.setHandValue(c2);
                     return true;
                 }
             }

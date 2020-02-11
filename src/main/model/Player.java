@@ -74,35 +74,35 @@ public class Player {
 
     // EFFECT: ranks hand from 0-5
     public void setHandPosition() {
-        if (firstCard.getPosition().equals("low")) {
+        if (this.firstCard.getPosition().equals("low")) {
             lowCardHandPosition();
-        } else if (firstCard.getPosition().equals("middle")) {
+        } else if (this.firstCard.getPosition().equals("middle")) {
             switch (secondCard.getPosition()) {
                 case "low":
-                    handPosition = 1;
+                    this.handPosition = 1;
                     break;
                 case "middle":
-                    handPosition = 2;
+                    this.handPosition = 2;
                     break;
                 case "high":
-                    handPosition = 4;
+                    this.handPosition = 4;
                     break;
             }
         } else {
-            handPosition = 5;
+            this.handPosition = 5;
         }
     }
 
     public void lowCardHandPosition() {
-        switch (secondCard.getPosition()) {
+        switch (this.secondCard.getPosition()) {
             case "low":
-                handPosition = 0;
+                this.handPosition = 0;
                 break;
             case "middle":
-                handPosition = 1;
+                this.handPosition = 1;
                 break;
             case "high":
-                handPosition = 3;
+                this.handPosition = 3;
         }
     }
 
@@ -126,7 +126,7 @@ public class Player {
     }
 
     public int getHandPosition() {
-        return handPosition;
+        return this.handPosition;
     }
 
     public String getName() {

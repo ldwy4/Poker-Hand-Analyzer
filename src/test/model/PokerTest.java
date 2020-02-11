@@ -74,6 +74,16 @@ public class PokerTest {
     }
 
     @Test
+    void testLowCardHandPosition() {
+        player2.setHand("2", "8", "H", "C");
+        player2.lowCardHandPosition();
+        assertEquals(1, player2.getHandPosition());
+        player2.setHand("2", "A", "H", "C");
+        player2.lowCardHandPosition();
+        assertEquals(3, player2.getHandPosition());
+    }
+
+    @Test
     void testCheckPairs() {
         player1.checkPairs(player2);
         assertEquals(80, player1.getOdds());
@@ -192,13 +202,13 @@ public class PokerTest {
         assertEquals(3, player1.getHankRank());
         assertEquals(0, player2.getHankRank());
         table.getBoardCards().clear();
-        table.getBoardCards().add(new Card("3", "C"));
+        table.getBoardCards().add(new Card("2", "C"));
         table.getBoardCards().add(new Card("3", "D"));
-        table.getBoardCards().add(new Card("8", "C"));
+        table.getBoardCards().add(new Card("7", "C"));
         table.getBoardCards().add(new Card("5", "C"));
         calculator.setHandRankings();
-        assertEquals(2, player1.getHankRank());
-        assertEquals(1, player2.getHankRank());
+        assertEquals(1, player1.getHankRank());
+        assertEquals(2, player2.getHankRank());
         table.getBoardCards().clear();
         table.getBoardCards().add(new Card("A", "C"));
         table.getBoardCards().add(new Card("A", "D"));
@@ -212,9 +222,54 @@ public class PokerTest {
         table.getBoardCards().add(new Card("3", "C"));
         table.getBoardCards().add(new Card("4", "C"));
         table.getBoardCards().add(new Card("5", "C"));
+        table.getBoardCards().add(new Card("6", "H"));
         calculator.setHandRankings();
-        assertEquals(1, player1.getHankRank());
+        assertEquals(2, player1.getHankRank());
         assertEquals(8, player2.getHankRank());
+    }
+
+    @Test
+    void testStraightFlush() {
+        player1.setHand("A", "K", "D", "D");
+        player2.setHand("3", "2", "H", "H");
+        table.getBoardCards().add(new Card("Q", "D"));
+        table.getBoardCards().add(new Card("5", "H"));
+        table.getBoardCards().add(new Card("6", "H"));
+        table.getBoardCards().add(new Card("4", "H"));
+        calculator = new EquityCalculator(table.getBoardCards(), table.getPlayers(), table.getDeck());
+        calculator.setHandRankings();
+        assertEquals(0, player1.getHankRank());
+        assertEquals(8, player2.getHankRank());
+        table.getBoardCards().clear();
+        table.getBoardCards().add(new Card("Q", "D"));
+        table.getBoardCards().add(new Card("10", "D"));
+        table.getBoardCards().add(new Card("J", "D"));
+        table.getBoardCards().add(new Card("4", "H"));
+        calculator.setHandRankings();
+        assertEquals(9, player1.getHankRank());
+        assertEquals(0, player2.getHankRank());
+    }
+
+    @Test
+    void testFlush() {
+        player1.setHand("A", "4", "D", "D");
+        player2.setHand("3", "2", "H", "H");
+        table.getBoardCards().add(new Card("Q", "D"));
+        table.getBoardCards().add(new Card("8", "H"));
+        table.getBoardCards().add(new Card("6", "H"));
+        table.getBoardCards().add(new Card("5", "H"));
+        calculator = new EquityCalculator(table.getBoardCards(), table.getPlayers(), table.getDeck());
+        calculator.setHandRankings();
+        assertEquals(0, player1.getHankRank());
+        assertEquals(5, player2.getHankRank());
+        table.getBoardCards().clear();
+        table.getBoardCards().add(new Card("Q", "D"));
+        table.getBoardCards().add(new Card("10", "D"));
+        table.getBoardCards().add(new Card("J", "D"));
+        table.getBoardCards().add(new Card("8", "H"));
+        calculator.setHandRankings();
+        assertEquals(5, player1.getHankRank());
+        assertEquals(0, player2.getHankRank());
     }
 
     @Test
@@ -249,6 +304,10 @@ public class PokerTest {
         calculator = new EquityCalculator(table.getBoardCards(), table.getPlayers(), table.getDeck());
         calculator.setHandRankings();
         assertEquals((float)14/44, calculator.getOuts(player2, player1));
+        table.getBoardCards().add(table.addCard("7", "H"));
+        calculator.calculateOdds(player2);
+        assertEquals((float)100, player1.getOdds());
+        assertEquals((float)0, player2.getOdds());
     }
 
     @Test

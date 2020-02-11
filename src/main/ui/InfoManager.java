@@ -27,7 +27,6 @@ public class InfoManager {
 
     //EFFECTS: parses user input until user quits
     public void handleUserInput() {
-        printInstructions();
         String str;
         while (runProgram) {
             str = getUserInputString();
@@ -181,7 +180,6 @@ public class InfoManager {
                     break;
                 case "new":
                     reset();
-                    printInstructions();
                     break;
                 case "add":
                     manualFlop();
@@ -189,12 +187,19 @@ public class InfoManager {
                 case "change":
                     chooseCardChange();
                     break;
+                case QUIT_COMMAND:
+                    quitApp();
+                    break;
                 default:
                     handOptions();
             }
         }
     }
 
+    public void quitApp() {
+        runProgram = false;
+        endProgram();
+    }
     private void chooseCardChange() {
         boolean done = true;
         while (done) {
@@ -381,6 +386,7 @@ public class InfoManager {
         usedCards = table.getUsedCards();
         boardCards = table.getBoardCards();
         equityCalculator = new EquityCalculator(boardCards, table.getPlayers(), deck);
+        printInstructions();
     }
 
 }
