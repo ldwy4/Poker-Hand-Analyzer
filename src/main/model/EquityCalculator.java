@@ -31,7 +31,7 @@ public class EquityCalculator {
         handRanks = new ArrayList<>();
     }
 
-    //MODIFIES: Players in players
+    //MODIFIES: Players p: players
     //EFFECTS: sets each players hand ranking
     public void setHandRankings() {
         for (Player p: players) {
@@ -64,6 +64,7 @@ public class EquityCalculator {
         }
     }
 
+    //MODIFIES: Player p: players
     //EFFECTS: calculates odds of each player winning
     public void calculateOdds(Player behindPlayer) {
         Player aheadPlayer;
@@ -170,33 +171,8 @@ public class EquityCalculator {
         return false;
     }
 
-    //MODIFIES: p
     //EFFECTS: returns true if hand contains straight-flush
     public boolean isStraightFlush(ArrayList<Card> hand, Player p) {
-//        ArrayList<ArrayList<Card>> suits = new ArrayList<>();
-//        ArrayList<Card> clubCards = new ArrayList<>();
-//        ArrayList<Card> spadeCards = new ArrayList<>();
-//        ArrayList<Card> heartCards = new ArrayList<>();
-//        ArrayList<Card> diamondCards = new ArrayList<>();
-//        suits.add(clubCards);
-//        suits.add(spadeCards);
-//        suits.add(heartCards);
-//        suits.add(diamondCards);
-//        for (Card c: hand) {
-//            switch (c.getSuit()) {
-//                case "S":
-//                    spadeCards.add(c);
-//                    break;
-//                case "C":
-//                    clubCards.add(c);
-//                    break;
-//                case "H":
-//                    heartCards.add(c);
-//                    break;
-//                case "D":
-//                    diamondCards.add(c);
-//            }
-//        }
         if (suitFlush(hand, p, "S").getValue()) {
             return isStraight(suitFlush(hand, p, "S").getKey(), p);
         } else if (suitFlush(hand, p, "D").getValue()) {
@@ -245,7 +221,6 @@ public class EquityCalculator {
         return false;
     }
 
-    //MODIFIES: p
     //EFFECTS: returns true if hand contains a flush
     public boolean isFlush(ArrayList<Card> hand, Player p) {
         if (suitFlush(hand, p, "S").getValue()) {
@@ -258,31 +233,6 @@ public class EquityCalculator {
             return true;
         }
         return false;
-//        ArrayList<ArrayList<Card>> suits = new ArrayList<>();
-//        ArrayList<Card> clubCards = new ArrayList<>();
-//        ArrayList<Card> spadeCards = new ArrayList<>();
-//        ArrayList<Card> heartCards = new ArrayList<>();
-//        ArrayList<Card> diamondCards = new ArrayList<>();
-//        suits.add(clubCards);
-//        suits.add(spadeCards);
-//        suits.add(heartCards);
-//        suits.add(diamondCards);
-//        for (Card c: hand) {
-//            switch (c.getSuit()) {
-//                case "S":
-//                    spadeCards.add(c);
-//                    break;
-//                case "C":
-//                    clubCards.add(c);
-//                    break;
-//                case "H":
-//                    heartCards.add(c);
-//                    break;
-//                case "D":
-//                    diamondCards.add(c);
-//            }
-//        }
-//       return (spadeCards.size() >= 5 || clubCards.size() >= 5 || heartCards.size() >= 5 || diamondCards.size() >= 5);
     }
 
     //MODIFIES: p

@@ -11,10 +11,8 @@ public class Card implements Comparable {
         return position;
     }
 
-//    public void setPosition(String position) {
-//        this.position = position;
-//    }
 
+    // Construct a card
     public Card(String number, String suit) {
         this.value = number;
         this.suit = suit;
@@ -40,6 +38,8 @@ public class Card implements Comparable {
         }
     }
 
+    //MODIFIES: this
+    //EFFECTS: sets position of card based on card value
     public void setPosition(String v) {
         if (v.equals("T") || v.equals("J") || v.equals("Q") || v.equals("K") || v.equals("A")) {
             position = "high";

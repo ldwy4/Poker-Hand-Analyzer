@@ -105,7 +105,7 @@ public class InfoManager {
     }
 
     //EFFECTS: assigns random hand to each player
-    public void randomHand() {
+    private void randomHand() {
         int i = 0;
         while (i < 2) {
             //set user hand
@@ -152,7 +152,7 @@ public class InfoManager {
     }
 
     //EFFECTS: prints options for users hand depending on input
-    public void handOptions() {
+    private void handOptions() {
         System.out.println("What do you want to do?\nOptions: odds, next, add, new, change");
         String str = getUserInputString();
         if (str.length() > 0) {
@@ -183,6 +183,7 @@ public class InfoManager {
         endProgram();
     }
 
+    //EFFECTS: asks user what cards they want to change
     private void chooseCardChange() {
         boolean done = true;
         while (done) {
@@ -198,6 +199,8 @@ public class InfoManager {
         handOptions();
     }
 
+
+    //EFFECTS: calls method that allow user to change card in desired position
     private boolean findCardChange(String change) {
         switch (change) {
             case "user":

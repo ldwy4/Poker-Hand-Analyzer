@@ -59,7 +59,7 @@ public class Player {
         this.secondCard = secondCard;
     }
 
-    //REQUIRES: cv1, cv2 valid card values and s1, s2 valid card suits
+    //REQUIRES: cv1, cv2 to be valid card values; s1, s2 to be valid card suits
     //MODIFIES: this
     //EFFECTS: sets player hand to cards with given values with given suits
     public void setHand(String cv1, String cv2, String s1, String s2) {
@@ -133,7 +133,6 @@ public class Player {
     }
 
 
-    // MODIFIES: this, other
     // EFFECTS: compares this hand to other players hand
     public void compareHand(Player other) {
         if (!checkPairs(other)) {
