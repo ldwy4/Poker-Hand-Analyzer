@@ -163,30 +163,22 @@ public class InfoManager {
         System.out.println("What do you want to do?\nOptions: odds, next, add, new, change");
         String str = getUserInputString();
         if (str.length() > 0) {
-            switch (str) {
-                case "next":
-                    autoFlop();
-                    break;
-                case "new":
-                    reset();
-                    break;
-                case "add":
-                    manualFlop();
-                    break;
-                case "change":
-                    chooseCardChange();
-                    break;
-                case "save":
-                    saveHand();
-                    break;
-                case "load":
-                    loadHand();
-                    break;
-                case QUIT_COMMAND:
-                    quitApp();
-                    break;
-                default:
-                    handOptions();
+            if (str.equals("next")) {
+                autoFlop();
+            } else if (str.equals("new")) {
+                reset();
+            } else if (str.equals("add")) {
+                manualFlop();
+            } else if (str.equals("change")) {
+                chooseCardChange();
+            } else if (str.equals("save")) {
+                saveHand();
+            } else if (str.equals("load")) {
+                loadHand();
+            } else if (str.equals(QUIT_COMMAND)) {
+                quitApp();
+            } else {
+                handOptions();
             }
         }
     }
