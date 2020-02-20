@@ -1,7 +1,11 @@
 package model;
 
+import persistence.Saveable;
+
+import java.io.PrintWriter;
+
 //Represents player at table, has hand of two cards, hand rank, and the odds associated with their hand
-public class Player {
+public class Player implements Saveable {
     private String name;
     private Card firstCard;
     private Card secondCard;
@@ -234,10 +238,23 @@ public class Player {
         }
     }
 
+    // EFFECTS: returns string representation of player
     @Override
-    //EFFECTS: returns string of cards in players hand
     public String toString() {
         return name + ": " + firstCard.toString() + " " + secondCard.toString() + " Odds: " + this.oddsToString();
+    }
+
+    @Override
+    public void save(PrintWriter printWriter) {
+        String delimiter = ", ";
+        printWriter.print(firstCard.getValue());
+        printWriter.print(delimiter);
+        printWriter.print(firstCard.getSuit());
+        printWriter.print(delimiter);
+        printWriter.print(secondCard.getValue());
+        printWriter.print(delimiter);
+        printWriter.print(secondCard.getSuit());
+        printWriter.print(delimiter);
     }
 
     //EFFECTS: returns this odds as String

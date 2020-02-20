@@ -156,8 +156,8 @@ public class EquityCalculator {
         } else if (isPair(hand, p)) {
             return PAIR;
         }
-        p.setHandValue(Math.max(p.getFirstCard().getRawValue(), p.getFirstCard().getRawValue()));
-        p.setKickerValue(Math.max(p.getFirstCard().getRawValue(), p.getFirstCard().getRawValue()));
+        p.setHandValue(Math.max(p.getFirstCard().getRawValue(), p.getSecondCard().getRawValue()));
+        p.setKickerValue(Math.min(p.getFirstCard().getRawValue(), p.getSecondCard().getRawValue()));
         return HIGH;
     }
 

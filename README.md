@@ -14,3 +14,8 @@ Features:
 - Allows user to **view** the odds of their hand of winning
 - Allows user to **add** cards to the table
 - Allows user to **choose** what cards get placed on the board or have board cards randomly generated
+
+## 2.0
+Features:
+- Allows user to **save** the state of the table (player hands and deck).
+- Allows user to **load** their saved table by name

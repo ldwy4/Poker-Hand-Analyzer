@@ -1,16 +1,18 @@
 package model;
 
+import persistence.Saveable;
+import java.io.PrintWriter;
+
 import java.util.ArrayList;
 
 //Table contains all players and cards on the table, as well as cards left in the deck
-public class Table {
+public class Table implements Saveable {
     private int numPlayers;
+    private String tableName;
     private ArrayList<Player> players;
     private ArrayList<Card> deck;
     private ArrayList<Card> usedCards;
     private ArrayList<Card> boardCards;
-
-
 
 
     public Table(Player p1, Player p2) {
@@ -63,15 +65,16 @@ public class Table {
         suits.add("C");
         suits.add("D");
         suits.add("H");
-        for (String s: suits) {
-            for (String v: values) {
-                Card card = new Card(v,s);
+        for (String s : suits) {
+            for (String v : values) {
+                Card card = new Card(v, s);
                 deck.add(card);
             }
         }
         return deck;
     }
 
+    // EFFECTS: returns string of each Card in boardCards
     public String boardCardsToString() {
         String board = "";
         for (int i = 0; i < boardCards.size(); i++) {
@@ -84,7 +87,7 @@ public class Table {
     //EFFECTS: returns card with given value and suit
     public Card addCard(String cv, String s) {
         Card foundCard = new Card(cv, s); //dummy
-        for (Card c: this.deck) {
+        for (Card c : this.deck) {
             if (c.getValue().equals(cv) && c.getSuit().equals(s)) {
                 foundCard = c;
                 this.deck.remove(c);
@@ -97,7 +100,7 @@ public class Table {
 
     // EFFECTS: removes card from deck once dealt
     public void removeCard(String cv, String s) {
-        for (Card c: this.deck) {
+        for (Card c : this.deck) {
             if (c.getValue().equals(cv) && c.getSuit().equals(s)) {
                 this.deck.remove(c);
                 this.usedCards.add(c);
@@ -108,7 +111,7 @@ public class Table {
 
     // EFFECT: produces true if card is a valid card
     public boolean validCard(String cv, String s) {
-        for (Card c: deck) {
+        for (Card c : deck) {
             if (c.getValue().equals(cv) && c.getSuit().equals(s)) {
                 return true;
             }
@@ -129,15 +132,33 @@ public class Table {
         return usedCards;
     }
 
+    // EFFECTS: returns the odds of each player before any cards in boardCards
     public String postFlopTableOdds() {
         String tableOdds = "";
-        for (Player p: players) {
+        for (Player p : players) {
             tableOdds += p.toString() + "\n";
         }
         return tableOdds;
     }
 
-//    public void setUsedCards(ArrayList<Card> usedCards) {
-//        this.usedCards = usedCards;
-//    }
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
+    }
+
+    public String getTableName() {
+        return tableName;
+    }
+
+    @Override
+    public void save(PrintWriter printWriter) {
+        String delimiter = ", ";
+        for (Card c : boardCards) {
+            printWriter.print(c.getValue());
+            printWriter.print(delimiter);
+            printWriter.print(c.getSuit());
+            printWriter.print(delimiter);
+        }
+        printWriter.print(tableName);
+        printWriter.println();
+    }
 }

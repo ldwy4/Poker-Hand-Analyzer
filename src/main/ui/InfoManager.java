@@ -1,6 +1,10 @@
 package ui;
 
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -8,8 +12,11 @@ import model.Card;
 import model.EquityCalculator;
 import model.Player;
 import model.Table;
+import persistence.Reader;
+import persistence.Writer;
 
 public class InfoManager {
+    private static final String HAND_FILE = "./data/hands.txt";
     private static final String QUIT_COMMAND = "quit";
     private Table table;
     private Scanner input;
@@ -83,7 +90,7 @@ public class InfoManager {
         String str = getUserInputString();
         if (str.length() == 5) {
             String[] cards = str.split("\\s+");
-            if (cards.length == 3) {
+            if (cards.length == 2) {
                 for (int i = 0; i < 2; i++) {
                     String card = cards[i].toUpperCase();
                     String value = Character.toString(card.charAt(0));
@@ -169,6 +176,12 @@ public class InfoManager {
                 case "change":
                     chooseCardChange();
                     break;
+                case "save":
+                    saveHand();
+                    break;
+                case "load":
+                    loadHand();
+                    break;
                 case QUIT_COMMAND:
                     quitApp();
                     break;
@@ -230,6 +243,8 @@ public class InfoManager {
         deck.add(p.getSecondCard());
         usedCards.remove(p.getFirstCard());
         usedCards.remove(p.getSecondCard());
+        p.setFirstCard(null);
+        p.setSecondCard(null);
         if (p.getName() == "user") {
             chooseHand();
         } else {
@@ -342,6 +357,53 @@ public class InfoManager {
                 System.out.println("Please enter " + numCards + "cards (i.e. 9D, AC)");
             }
         }
+    }
+
+    // MODIFIES: this
+    // EFFECTS: loads hand from ACCOUNTS_FILE, if that file exists;
+    private void loadHand() {
+        System.out.println("What table do you want to load?");
+        String str = getUserInputString();
+        try {
+            table = Reader.readHands(new File(HAND_FILE), str);
+            user = table.getPlayers().get(0);
+            user = table.getPlayers().get(1);
+            deck = table.getDeck();
+            usedCards = table.getUsedCards();
+            boardCards = table.getBoardCards();
+            equityCalculator = new EquityCalculator(boardCards, table.getPlayers(), deck);
+            if (boardCards.size() == 0) {
+                printPreFlopOdds();
+            } else {
+                printPostFlopOdds();
+            }
+            handOptions();
+        } catch (IOException e) {
+            reset();
+        }
+    }
+
+    // EFFECTS: saves state of player and opponent hand and deck to HANDS_FILE
+    public void saveHand() {
+        System.out.println("What do you want to name the table?");
+        String str = getUserInputString();
+        try {
+            table.setTableName(str);
+            Writer writer = new Writer(new File(HAND_FILE));
+            writer.write(user);
+            writer.write(opponent);
+            writer.write(table);
+            writer.close();
+            System.out.println("Hand has been saved to file " + HAND_FILE);
+            System.out.println("Hand name: " + table.getTableName());
+        } catch (FileNotFoundException e) {
+            System.out.println("Unable to save hand to " + HAND_FILE);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        handOptions();
     }
 
     //EFFECTS: removes white space and quotation marks around s

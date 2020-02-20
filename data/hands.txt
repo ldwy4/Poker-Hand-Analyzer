@@ -1,0 +1,2 @@
+9, S, 3, D, T, D, T, C, 8, H, 8, C, 3, S, 7, H, twopairs
+T, D, 6, C, A, H, Q, H, A, C, 5, S, T, C, A, S, threeaces
