@@ -149,6 +149,7 @@ public class Table implements Saveable {
         return tableName;
     }
 
+    // EFFECTS: allows table state to be written to file
     @Override
     public void save(PrintWriter printWriter) {
         String delimiter = ", ";
