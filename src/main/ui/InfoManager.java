@@ -8,6 +8,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import exceptions.NoHandFound;
 import model.Card;
 import model.EquityCalculator;
 import model.Player;
@@ -371,7 +372,11 @@ public class InfoManager {
             }
             handOptions();
         } catch (IOException e) {
-            reset();
+            System.out.println("Error Occurred");
+            handOptions();
+        } catch (NoHandFound e) {
+            System.out.println("No hand found");
+            handOptions();
         }
     }
 

@@ -17,14 +17,10 @@ public class Reader {
 
     // EFFECTS: returns a list of accounts parsed from file; throws
     // IOException if an exception is raised when opening / reading from file
-    public static Table readHands(File file, String handName) throws IOException {
+    public static Table readHands(File file, String handName) throws IOException, NoHandFound {
         List<String> fileContent = readFile(file);
         Table table = new Table(new Player("me"), new Player("you"));
-        try {
-            table = parseContent(fileContent, handName);
-        } catch (NoHandFound e) {
-            System.out.println("No Hand found");
-        }
+        table = parseContent(fileContent, handName);
         return table;
     }
 

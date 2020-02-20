@@ -1,5 +1,6 @@
 package persistence;
 
+import exceptions.NoHandFound;
 import model.Table;
 import model.Player;
 import model.Card;
@@ -22,7 +23,7 @@ class ReaderTest {
             assertEquals("opponent: A❤ Q❤ Odds: opponent 50.0%", opponent.toString());
             assertEquals(4, table.getBoardCards().size());
             assertEquals(44, table.getDeck().size());
-        } catch (IOException e) {
+        } catch (IOException | NoHandFound e) {
             fail("IOException should not have have been thrown");
         }
     }
