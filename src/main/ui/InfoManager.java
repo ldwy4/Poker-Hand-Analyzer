@@ -112,6 +112,7 @@ public class InfoManager {
         }
     }
 
+    //MODIFIES: user, opponent
     //EFFECTS: assigns random hand to each player
     private void randomHand() {
         int i = 0;

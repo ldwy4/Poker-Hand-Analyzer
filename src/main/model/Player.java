@@ -244,6 +244,7 @@ public class Player implements Saveable {
         return name + ": " + firstCard.toString() + " " + secondCard.toString() + " Odds: " + this.oddsToString();
     }
 
+    // EFFECTS: allows player hand to be written to file
     @Override
     public void save(PrintWriter printWriter) {
         String delimiter = ", ";

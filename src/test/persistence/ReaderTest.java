@@ -27,5 +27,17 @@ class ReaderTest {
             fail("IOException should not have have been thrown");
         }
     }
+
+    @Test
+    void testNoHandFoundException() {
+        try {
+            Table table = Reader.readHands(new File("./data/testHandsFile1.txt"), "foobar");
+            fail();
+        } catch (NoHandFound e) {
+            //catch this
+        } catch (IOException e) {
+            fail("IOException should not have have been thrown");
+        }
+    }
 }
 
