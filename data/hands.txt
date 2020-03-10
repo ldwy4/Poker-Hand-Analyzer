@@ -1,2 +1,5 @@
 9, S, 3, D, T, D, T, C, 8, H, 8, C, 3, S, 7, H, twopairs
 T, D, 6, C, A, H, Q, H, A, C, 5, S, T, C, A, S, threeaces
+T, D, 3, D, K, H, 2, H, 3, C, 8, H, 7, S, foobar
+8, D, 4, S, 7, H, 6, S, K, S, 4, H, 4, D, setfour
+7, H, 9, C, 7, D, 2, H, 2, C, 6, D, 6, C, sevens

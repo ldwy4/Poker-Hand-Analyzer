@@ -6,7 +6,8 @@ import model.Table;
 
 public class Main {
     public static void main(String[] args) {
-        InfoManager info = new InfoManager();
-        info.handleUserInput();
+        GUI gui = new GUI();
+//        InfoManager info = new InfoManager();
+//        info.handleUserInput();
     }
 }

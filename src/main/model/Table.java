@@ -1,6 +1,8 @@
 package model;
 
 import persistence.Saveable;
+
+import java.awt.*;
 import java.io.PrintWriter;
 
 import java.util.ArrayList;
@@ -49,6 +51,7 @@ public class Table implements Saveable {
 //        this.deck = deck;
 //    }
 
+    //EFFECTS: creates new ArrayList containing all cards in new deck
     public ArrayList<Card> newDeck() {
         ArrayList<Card> deck = new ArrayList<>();
         ArrayList<String> values = new ArrayList<>();
@@ -65,14 +68,24 @@ public class Table implements Saveable {
         suits.add("C");
         suits.add("D");
         suits.add("H");
+        int y = 0;
         for (String s : suits) {
+            int x = 0;
             for (String v : values) {
                 Card card = new Card(v, s);
                 deck.add(card);
+                x += 60;
             }
+            y += 100;
         }
         return deck;
     }
+
+//    public void drawDeck(Graphics g) {
+//        for (Card c: deck) {
+//            c.draw(g);
+//        }
+//    }
 
     // EFFECTS: returns string of each Card in boardCards
     public String boardCardsToString() {

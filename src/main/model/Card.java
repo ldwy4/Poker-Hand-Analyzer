@@ -1,11 +1,18 @@
 package model;
 
+import ui.ImageStore;
+
+import java.awt.*;
+
 //Card that has value (Ace-King), suit, and position (low, middle, or high card)
 public class Card implements Comparable {
     private String value;
     private int rawValue;
     private String suit;
     private String position;
+    private Image image;
+//    private int x;
+//    private int y;
 
     public String getPosition() {
         return position;
@@ -16,7 +23,13 @@ public class Card implements Comparable {
     public Card(String number, String suit) {
         this.value = number;
         this.suit = suit;
+//        this.x = x;
+//        this.y = y;
         setPosition(value);
+        if (number.equals("T")) {
+            number = "10";
+        }
+        image = ImageStore.get().getImage("images/cards/" + number + suit + ".png");
         switch (value) {
             case "T":
                 rawValue = 10;
@@ -70,6 +83,13 @@ public class Card implements Comparable {
 //        this.suit = suit;
 //    }
 
+//    public void draw(Graphics g) {
+//        g.drawImage(image, 10, 10,59, 90, null);
+//    }
+
+    public Image getImage() {
+        return image;
+    }
 
     @Override
     public String toString() {
