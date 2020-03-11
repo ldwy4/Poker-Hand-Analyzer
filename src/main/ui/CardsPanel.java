@@ -2,18 +2,16 @@ package ui;
 
 import model.Card;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FilenameFilter;
-import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 
 public class CardsPanel extends JPanel {
     ArrayList<Card> deck;
+    public static final int CARD_WIDTH = 59;
+    public static final int CARD_HEIGHT = 90;
 
     // File representing the folder that you select using a FileChooser
     static final File dir = new File("/images");
@@ -44,7 +42,7 @@ public class CardsPanel extends JPanel {
     public CardsPanel(ArrayList<Card> deck) {
         super(new BorderLayout());
         this.deck = deck;
-        setPreferredSize(new Dimension(GUI.WIDTH, 400));
+        setPreferredSize(new Dimension(GUI.WIDTH, 250));
     }
 
     @Override
@@ -52,10 +50,19 @@ public class CardsPanel extends JPanel {
         //dir.isDirectory();
         super.paintComponent(g);
         int y = 0;
-        for (int j = 0; j < 4; j++) {
+        deck.get(36).setIsSelected(true);
+        for (int j = 0; j < 2; j++) {
             int x = 0;
-            for (int i = 0; i < 13; i++) {
-                g.drawImage(deck.get(i + 13 * j).getImage(), x, y, 59, 90, null);
+            for (int i = 0; i < 26; i++) {
+                g.drawImage(deck.get(i + 26 * j).getImage(), x, y, CARD_WIDTH, CARD_HEIGHT, null);
+                if (deck.get(i + 26 * j).getIsSelected()) {
+                    Graphics2D g2d = (Graphics2D) g;
+                    g2d.setStroke(new BasicStroke(3));
+                    g2d.setColor(Color.CYAN);
+                    g2d.drawRect(x, y, CARD_WIDTH, CARD_HEIGHT);
+                    deck.get(i + 26 * j).setPosX(x);
+                    deck.get(i + 26 * j).setPosY(y);
+                }
                 x += 60;
             }
             y += 100;

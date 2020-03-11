@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class GUI extends JFrame {
-    public static final int WIDTH = 1400;
+    public static final int WIDTH = 1800;
     public static final int HEIGHT = 1000;
     private TablePanel table;
     private CardsPanel cards;
@@ -75,4 +75,20 @@ public class GUI extends JFrame {
         opponent = new Player("opponent");
         pokerTable = new Table(user, opponent);
     }
+
+//    private void handleMouseClicked(MouseEvent e) {
+//
+//    }
+//
+//    private class MouseListener extends MouseAdapter {
+//        // EFFECTS:Forward mouse clicked event to the active tool
+//        public void mouseClicked(MouseEvent e) {
+//            handleMouseClicked(translateEvent(e));
+//        }
+//
+//        // EFFECTS: translates the mouse event to current drawing's coordinate system
+//        private MouseEvent translateEvent(MouseEvent e) {
+//            return SwingUtilities.convertMouseEvent(e.getComponent(), e, cards);
+//        }
+//    }
 }

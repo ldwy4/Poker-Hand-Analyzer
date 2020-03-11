@@ -1,5 +1,6 @@
 package model;
 
+import ui.CardsPanel;
 import ui.ImageStore;
 
 import java.awt.*;
@@ -11,8 +12,9 @@ public class Card implements Comparable {
     private String suit;
     private String position;
     private Image image;
-//    private int x;
-//    private int y;
+    private int posX;
+    private int posY;
+    private boolean isSelected = false;
 
     public String getPosition() {
         return position;
@@ -90,6 +92,47 @@ public class Card implements Comparable {
     public Image getImage() {
         return image;
     }
+
+    public boolean getIsSelected() {
+        return isSelected;
+    }
+
+    public void setIsSelected(boolean isSelected) {
+        this.isSelected = isSelected;
+    }
+
+    public int getPosX() {
+        return posX;
+    }
+
+    public void setPosX(int posX) {
+        this.posX = posX;
+    }
+
+    public int getPosY() {
+        return posY;
+    }
+
+    public void setPosY(int posY) {
+        this.posY = posY;
+    }
+
+//    public boolean containsX(int x) {
+//        return (this.posX <= x) && (x <= this.posX + CardsPanel.CARD_WIDTH);
+//    }
+//
+//    // EFFECTS: return true iff the given y value is within the bounds of the Shape
+//    public boolean containsY(int y) {
+//        return (this.posY <= y) && (y <= this.posY + CardsPanel.CARD_HEIGHT);
+//    }
+//
+//    // EFFECTS: return true if the given Point (x,y) is contained within the bounds of this Shape
+//    public boolean contains(Point point) {
+//        int pointX = point.x;
+//        int pointY = point.y;
+//
+//        return containsX(pointX) && containsY(pointY);
+//    }
 
     @Override
     public String toString() {
