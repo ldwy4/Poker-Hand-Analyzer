@@ -70,7 +70,7 @@ public class CardsPanel extends JPanel {
         //getImage(g);
     }
 
-
+//
 //    private void getImage(Graphics g) {
 //        int spacingY = 0;
 //        for (String s: EXTENSIONS) {
