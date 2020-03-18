@@ -72,15 +72,11 @@ public class Table extends Clickable implements Saveable {
         suits.add("C");
         suits.add("D");
         suits.add("H");
-        int y = 0;
         for (String s : suits) {
-            int x = 0;
             for (String v : values) {
                 Card card = new Card(v, s);
                 deck.add(card);
-                x += 60;
             }
-            y += 100;
         }
         return deck;
     }
