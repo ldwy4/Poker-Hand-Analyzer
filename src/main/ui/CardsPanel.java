@@ -106,8 +106,9 @@ public class CardsPanel extends JPanel {
 
     // EFFECTS: updates player odds that are displayed
     public void update() {
-        System.out.println(players.get(0).getOdds());
-        playerLbl1.setText(POKER_LABEL + "User Odds: " + players.get(0).getOdds() + " Opponent Odds: " + players.get(1).getOdds());
+        float odd1 = players.get(0).getOdds();
+        float odd2 = players.get(1).getOdds();
+        playerLbl1.setText(POKER_LABEL + "User Odds: " + odd1 + " Opponent Odds: " + odd2);
         repaint();
     }
 
