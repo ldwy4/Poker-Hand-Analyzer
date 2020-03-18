@@ -59,7 +59,8 @@ public class ImageStore {
         } // catch
 
         // create an accelerated image (correct size) to store our sprite in
-        GraphicsConfiguration gc = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsConfiguration gc = ge.getDefaultScreenDevice().getDefaultConfiguration();
         Image image = gc.createCompatibleImage(sourceImage.getWidth(), sourceImage.getHeight(), Transparency.BITMASK);
 
         // draw our source image into the accelerated image
