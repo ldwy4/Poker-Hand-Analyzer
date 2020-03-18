@@ -1,6 +1,8 @@
 package ui;
 
 import model.Card;
+import model.Player;
+import model.Table;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,6 +12,11 @@ import java.util.ArrayList;
 
 public class CardsPanel extends JPanel {
     ArrayList<Card> deck;
+    ArrayList<Player> players;
+    Table table;
+    private JLabel playerLbl1;
+    private JLabel playerLbl2;
+    private static final String POKER_LABEL = "Player odds: ";
     public static final int CARD_WIDTH = 59;
     public static final int CARD_HEIGHT = 90;
 
@@ -39,10 +46,69 @@ public class CardsPanel extends JPanel {
         }
     };
 
-    public CardsPanel(ArrayList<Card> deck) {
+    public CardsPanel(ArrayList<Card> deck, Table table) {
         super(new BorderLayout());
         this.deck = deck;
-        setPreferredSize(new Dimension(GUI.WIDTH, 250));
+        this.players = table.getPlayers();
+        this.table = table;
+        setPreferredSize(new Dimension(GUI.WIDTH, GUI.HEIGHT));
+        playerLbl1 = new JLabel(POKER_LABEL);
+        playerLbl1.setPreferredSize(new Dimension(200, 30));
+        playerLbl1.setHorizontalTextPosition(SwingConstants.CENTER);
+        playerLbl1.setVerticalTextPosition(SwingConstants.CENTER);
+        playerLbl2 = new JLabel(POKER_LABEL);
+        playerLbl2.setPreferredSize(new Dimension(200, 30));
+        playerLbl2.setHorizontalTextPosition(SwingConstants.RIGHT);
+        playerLbl2.setVerticalTextPosition(SwingConstants.BOTTOM);
+        add(playerLbl1);
+        // add(playerLbl2);
+    }
+
+    // EFFECTS: returns the Card at a given Point in panel, if any
+    public Card getCardAtPoint(Point point) {
+        for (Card c : deck) {
+            if (c.contains(point)) {
+                return c;
+            }
+        }
+        return null;
+    }
+
+    // EFFECTS: returns the Card at a given Point in panel, if any
+    public Player getPlayerAtPoint(Point point) {
+        for (Player p : players) {
+            if (p.contains(point)) {
+                return p;
+            }
+        }
+        return null;
+    }
+
+    // EFFECTS: returns the Card at a given Point in panel, if any
+    public Table getTableAtPoint(Point point) {
+        if (table.contains(point)) {
+            return table;
+        }
+        return null;
+    }
+
+    public void setTable(Table table) {
+        this.table = table;
+        this.players = table.getPlayers();
+        table.getPlayers().get(0).setPosX(500);
+        table.getPlayers().get(1).setPosX(700);
+        table.setPosX(510);
+    }
+
+    public void setDeck(ArrayList<Card> deck) {
+        this.deck = deck;
+    }
+
+    // EFFECTS: updates player odds that are displayed
+    public void update() {
+        System.out.println(players.get(0).getOdds());
+        playerLbl1.setText(POKER_LABEL + "User Odds: " + players.get(0).getOdds() + " Opponent Odds: " + players.get(1).getOdds());
+        repaint();
     }
 
     @Override
@@ -50,82 +116,26 @@ public class CardsPanel extends JPanel {
         //dir.isDirectory();
         super.paintComponent(g);
         int y = 0;
-        deck.get(36).setIsSelected(true);
         for (int j = 0; j < 2; j++) {
             int x = 0;
             for (int i = 0; i < 26; i++) {
-                g.drawImage(deck.get(i + 26 * j).getImage(), x, y, CARD_WIDTH, CARD_HEIGHT, null);
+                deck.get(i + 26 * j).setPosX(x);
+                deck.get(i + 26 * j).setPosY(y);
+                deck.get(i + 26 * j).draw(g);
+                //g.drawImage(deck.get(i + 26 * j).getImage(), x, y, CARD_WIDTH, CARD_HEIGHT, null);
                 if (deck.get(i + 26 * j).getIsSelected()) {
                     Graphics2D g2d = (Graphics2D) g;
                     g2d.setStroke(new BasicStroke(3));
                     g2d.setColor(Color.CYAN);
                     g2d.drawRect(x, y, CARD_WIDTH, CARD_HEIGHT);
-                    deck.get(i + 26 * j).setPosX(x);
-                    deck.get(i + 26 * j).setPosY(y);
                 }
                 x += 60;
             }
             y += 100;
         }
-        //getImage(g);
+        for (Player p : players) {
+            p.draw(g);
+        }
+        table.draw(g);
     }
-
-
-//    private void getImage(Graphics g) {
-//        int spacingY = 0;
-//        for (String s: EXTENSIONS) {
-//            int spacingX = 0;
-//            for (String v: VALUES) {
-//                BufferedImage sourceImage = null;
-//                String ref = "images/cards/" + v + s + ".png";
-//                try {
-//                    // get the image location
-//                    URL url = this.getClass().getClassLoader().getResource(ref);
-//                    if (url == null) {
-//                        System.out.println("Failed to load: " + ref);
-//                        System.exit(0); // exit program if file not found
-//                    }
-//                    sourceImage = ImageIO.read(url); // get image
-//                } catch (IOException e) {
-//                    System.out.println("Failed to load: " + ref);
-//                    System.exit(0); // exit program if file not loaded
-//                } // catch
-//
-//                // create an accelerated image (correct size) to store our sprite in
-//                GraphicsConfiguration gc = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
-//                Image image = gc.createCompatibleImage(sourceImage.getWidth(), sourceImage.getHeight(), Transparency.BITMASK);
-//
-//                // draw our source image into the accelerated image
-//                image.getGraphics().drawImage(sourceImage, 0, 0, null);
-//
-//                g.drawImage(sourceImage, spacingX, spacingY, 59, 90, null);
-//                spacingX += 60;
-//            }
-//            spacingY += 100;
-//        }
-//        int spacing = 0;
-//        System.out.println(dir.isDirectory());
-//        if (dir.isDirectory()) { // make sure it's a directory
-//            for (final File f : dir.listFiles(IMAGE_FILTER)) {
-//                BufferedImage img = null;
-//
-//                try {
-//                    img = ImageIO.read(f);
-//                } catch (IOException e) {
-//                    System.out.println("Failed to load");
-//                    System.exit(0); // exit program if file not loaded
-//                } // catch
-//
-//                // create an accelerated image (correct size) to store our sprite in
-//                GraphicsConfiguration gc = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
-//                Image image = gc.createCompatibleImage(img.getWidth(), img.getHeight(), Transparency.BITMASK);
-//
-//                // draw our source image into the accelerated image
-//                image.getGraphics().drawImage(img, 0, 0, null);
-//
-//                g.drawImage(img, spacing, 0, null);
-//                spacing += 50;
-//            }
-//        }
-//    }
 }

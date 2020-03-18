@@ -6,20 +6,13 @@ import ui.ImageStore;
 import java.awt.*;
 
 //Card that has value (Ace-King), suit, and position (low, middle, or high card)
-public class Card implements Comparable {
+public class Card extends Clickable implements Comparable  {
     private String value;
     private int rawValue;
     private String suit;
     private String position;
     private Image image;
-    private int posX;
-    private int posY;
     private boolean isSelected = false;
-
-    public String getPosition() {
-        return position;
-    }
-
 
     // Construct a card
     public Card(String number, String suit) {
@@ -32,6 +25,12 @@ public class Card implements Comparable {
             number = "10";
         }
         image = ImageStore.get().getImage("images/cards/" + number + suit + ".png");
+        setRawValue(value);
+    }
+
+    //MODIFIES: this
+    //EFFECTS: sets the raw value of this card based on value of given string
+    private void setRawValue(String value) {
         switch (value) {
             case "T":
                 rawValue = 10;
@@ -65,6 +64,10 @@ public class Card implements Comparable {
         }
     }
 
+    public String getPosition() {
+        return position;
+    }
+
     public int getRawValue() {
         return rawValue;
     }
@@ -85,9 +88,10 @@ public class Card implements Comparable {
 //        this.suit = suit;
 //    }
 
-//    public void draw(Graphics g) {
-//        g.drawImage(image, 10, 10,59, 90, null);
-//    }
+    //EFFECTS: draws card
+    public void draw(Graphics g) {
+        g.drawImage(image, posX, posY, CardsPanel.CARD_WIDTH, CardsPanel.CARD_HEIGHT, null);
+    }
 
     public Image getImage() {
         return image;
@@ -101,38 +105,6 @@ public class Card implements Comparable {
         this.isSelected = isSelected;
     }
 
-    public int getPosX() {
-        return posX;
-    }
-
-    public void setPosX(int posX) {
-        this.posX = posX;
-    }
-
-    public int getPosY() {
-        return posY;
-    }
-
-    public void setPosY(int posY) {
-        this.posY = posY;
-    }
-
-//    public boolean containsX(int x) {
-//        return (this.posX <= x) && (x <= this.posX + CardsPanel.CARD_WIDTH);
-//    }
-//
-//    // EFFECTS: return true iff the given y value is within the bounds of the Shape
-//    public boolean containsY(int y) {
-//        return (this.posY <= y) && (y <= this.posY + CardsPanel.CARD_HEIGHT);
-//    }
-//
-//    // EFFECTS: return true if the given Point (x,y) is contained within the bounds of this Shape
-//    public boolean contains(Point point) {
-//        int pointX = point.x;
-//        int pointY = point.y;
-//
-//        return containsX(pointX) && containsY(pointY);
-//    }
 
     @Override
     public String toString() {

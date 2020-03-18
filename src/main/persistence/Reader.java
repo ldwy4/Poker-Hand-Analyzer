@@ -19,8 +19,8 @@ public class Reader {
     // IOException if an exception is raised when opening / reading from file
     public static Table readHands(File file, String handName) throws IOException, NoHandFound {
         List<String> fileContent = readFile(file);
-        Table table = new Table(new Player("me"), new Player("you"));
-        table = parseContent(fileContent, handName);
+        //Table table = new Table(new Player("me"), new Player("you"));
+        Table table = parseContent(fileContent, handName);
         return table;
     }
 
@@ -64,6 +64,7 @@ public class Reader {
         for (int i = 8; i < components.size() - 1; i += 2) {
             table.getBoardCards().add(table.addCard(components.get(i), components.get(i + 1)));
         }
+        table.setTableName(components.get(components.size() - 1));
         return table;
     }
 }

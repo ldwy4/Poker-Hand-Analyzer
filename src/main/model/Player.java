@@ -1,11 +1,14 @@
 package model;
 
 import persistence.Saveable;
+import ui.CardsPanel;
+import ui.ImageStore;
 
+import java.awt.*;
 import java.io.PrintWriter;
 
 //Represents player at table, has hand of two cards, hand rank, and the odds associated with their hand
-public class Player implements Saveable {
+public class Player extends Clickable implements Saveable {
     private String name;
     private Card firstCard;
     private Card secondCard;
@@ -15,6 +18,8 @@ public class Player implements Saveable {
     private int handRank; //0-10; High Card - Royal Flush
     private int handValue; //value of high card in hand made
     private int kickerValue; //value of card in player hand that is not in total hand
+    private int posX;
+    public static final int posY = 500;
 
     public Player(String name) {
         this.name = name;
@@ -61,6 +66,14 @@ public class Player implements Saveable {
 
     public void setSecondCard(Card secondCard) {
         this.secondCard = secondCard;
+    }
+
+    public int getPosX() {
+        return posX;
+    }
+
+    public void setPosX(int posX) {
+        this.posX = posX;
     }
 
     //REQUIRES: cv1, cv2 to be valid card values; s1, s2 to be valid card suits
@@ -261,5 +274,28 @@ public class Player implements Saveable {
     //EFFECTS: returns this odds as String
     public String oddsToString() {
         return this.name + " " + this.odds + "%";
+    }
+
+    @Override
+    public boolean containsX(int x) {
+        return (this.posX <= x) && (x <= this.posX + 2 * CardsPanel.CARD_WIDTH);
+    }
+
+    //EFFECTS: draws this player's cards
+    public void draw(Graphics g) {
+        Image image1 = null;
+        Image image2 = null;
+        if (firstCard == null) {
+            image1 = ImageStore.get().getImage("images/freeslot.png");
+        } else {
+            image1 = firstCard.getImage();
+        }
+        if (secondCard == null) {
+            image2 = ImageStore.get().getImage("images/freeslot.png");
+        } else {
+            image2 = secondCard.getImage();
+        }
+        g.drawImage(image1, posX, posY, CardsPanel.CARD_WIDTH, CardsPanel.CARD_HEIGHT, null);
+        g.drawImage(image2, posX + 60, posY, CardsPanel.CARD_WIDTH, CardsPanel.CARD_HEIGHT, null);
     }
 }

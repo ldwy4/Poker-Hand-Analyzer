@@ -1,6 +1,8 @@
 package model;
 
 import persistence.Saveable;
+import ui.CardsPanel;
+import ui.ImageStore;
 
 import java.awt.*;
 import java.io.PrintWriter;
@@ -8,23 +10,25 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 
 //Table contains all players and cards on the table, as well as cards left in the deck
-public class Table implements Saveable {
+public class Table extends Clickable implements Saveable {
     private int numPlayers;
     private String tableName;
     private ArrayList<Player> players;
     private ArrayList<Card> deck;
     private ArrayList<Card> usedCards;
     private ArrayList<Card> boardCards;
+    private static final int TABLE_Y = 400;
 
 
     public Table(Player p1, Player p2) {
         players = new ArrayList<>();
         deck = newDeck();
         usedCards = new ArrayList<>();
-        boardCards = new ArrayList<>();
+        boardCards = new ArrayList<>(5);
         players.add(p1);
         players.add(p2);
         numPlayers = players.size();
+        super.setPosY(TABLE_Y);
     }
 
     public int getNumPlayers() {
@@ -162,6 +166,11 @@ public class Table implements Saveable {
         return tableName;
     }
 
+    @Override
+    public boolean containsX(int x) {
+        return (this.posX <= x) && (x <= this.posX + 5 * CardsPanel.CARD_WIDTH);
+    }
+
     // EFFECTS: allows table state to be written to file
     @Override
     public void save(PrintWriter printWriter) {
@@ -174,5 +183,20 @@ public class Table implements Saveable {
         }
         printWriter.print(tableName);
         printWriter.println();
+    }
+
+    //EFFECTS: draws this player's cards
+    public void draw(Graphics g) {
+        int x = posX;
+        for (int i = 0; i < 5; i++) {
+            Image image;
+            if (i >= boardCards.size()) {
+                image = ImageStore.get().getImage("images/freeslot.png");
+            } else {
+                image = boardCards.get(i).getImage();
+            }
+            g.drawImage(image, x, posY, CardsPanel.CARD_WIDTH, CardsPanel.CARD_HEIGHT, null);
+            x += 60;
+        }
     }
 }
