@@ -356,11 +356,11 @@ public class PokerTest {
         card = new Card("A", "D");
         assertEquals("A" + Character.toString('\u2666'), card.toString());
     }
-
-    @Test
-    void testPlayerToString() {
-        assertEquals("me: A" + Character.toString('\u2660') + " A" + Character.toString('\u2764') + " Odds: me 50.0%", player1.toString());
-    }
+//
+//    @Test
+//    void testPlayerToString() {
+//        assertEquals("me: A" + Character.toString('\u2660') + " A" + Character.toString('\u2764') + " Odds: me 50.0%", player1.toString());
+//    }
 
     @Test
     void testPostFlopTableOdds() {

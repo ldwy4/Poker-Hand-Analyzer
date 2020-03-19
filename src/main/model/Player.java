@@ -251,11 +251,11 @@ public class Player extends Clickable implements Saveable {
         }
     }
 
-    // EFFECTS: returns string representation of player
-    @Override
-    public String toString() {
-        return name + ": " + firstCard.toString() + " " + secondCard.toString() + " Odds: " + this.oddsToString();
-    }
+//    // EFFECTS: returns string representation of player
+//    @Override
+//    public String toString() {
+//        return name + ": " + firstCard.toString() + " " + secondCard.toString() + " Odds: " + this.oddsToString();
+//    }
 
     // EFFECTS: allows player hand to be written to file
     @Override
