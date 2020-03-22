@@ -19,3 +19,11 @@ Features:
 Features:
 - Allows user to **save** the state of the table (player hands and deck).
 - Allows user to **load** their saved table by name
+
+## 3.0
+Features:
+- Click on cards from top to select them, click anywhere else on screen to unselect card.
+- When a card is selected, click on any of the empty slots to add card to that section.
+- When no card is selected, lick on section (board, or each players hand) to remove last card that was added to the section.
+- To load old hand, type the name of the hand into the text input below "load" button then hit load
+- To save current hand, type name into text input under "save" button then press save

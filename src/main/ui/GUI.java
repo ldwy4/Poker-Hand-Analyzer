@@ -34,6 +34,7 @@ public class GUI extends JFrame {
     JButton load;
     JButton reset;
     JTextField fileLoad;
+    JTextField fileSave;
 
     public GUI() {
         super("Poker Hand Analyzer");
@@ -68,11 +69,13 @@ public class GUI extends JFrame {
         load = new JButton("Load");
         reset = new JButton("Reset");
         fileLoad = new JTextField();
+        fileSave = new JTextField();
         save.addActionListener(new SaveButtonClickHandler());
         load.addActionListener(new LoadButtonClickHandler());
         reset.addActionListener(new ResetButtonClickHandler());
         container.add(reset);
         container.add(save);
+        container.add(fileSave);
         container.add(load);
         container.add(fileLoad);
     }
@@ -163,8 +166,6 @@ public class GUI extends JFrame {
             if (table.getBoardCards().size() >= 3) {
                 equityCalculator.setHandRankings();
             }
-            System.out.println(user.getOdds());
-            System.out.println(opponent.getOdds());
             cards.update();
         }
     }
@@ -180,9 +181,9 @@ public class GUI extends JFrame {
     }
 
     // EFFECTS: saves state of player and opponent hand and deck to HANDS_FILE
-    public void saveHand() {
+    public void saveHand(String str) {
         try {
-            table.setTableName("Bob");
+            table.setTableName(str);
             Writer writer = new Writer(new File(HAND_FILE));
             writer.write(user);
             writer.write(opponent);
@@ -249,7 +250,8 @@ public class GUI extends JFrame {
         //EFFECTS: either saves or shows list of saved tables based on action
         @Override
         public void actionPerformed(ActionEvent e) {
-            saveHand();
+            saveHand(fileSave.getText());
+            fileSave.setText("");
         }
     }
 

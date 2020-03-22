@@ -19,11 +19,12 @@ public class Player extends Clickable implements Saveable {
     private int handValue; //value of high card in hand made
     private int kickerValue; //value of card in player hand that is not in total hand
     private int posX;
-    public static final int posY = 500;
+    public static final int POS_Y = 500;
 
     public Player(String name) {
         this.name = name;
         odds = (float)50;
+        super.setPosY(POS_Y);
     }
 
     public int getKickerValue() {
@@ -295,7 +296,7 @@ public class Player extends Clickable implements Saveable {
         } else {
             image2 = secondCard.getImage();
         }
-        g.drawImage(image1, posX, posY, CardsPanel.CARD_WIDTH, CardsPanel.CARD_HEIGHT, null);
-        g.drawImage(image2, posX + 60, posY, CardsPanel.CARD_WIDTH, CardsPanel.CARD_HEIGHT, null);
+        g.drawImage(image1, posX, POS_Y, CardsPanel.CARD_WIDTH, CardsPanel.CARD_HEIGHT, null);
+        g.drawImage(image2, posX + 60, POS_Y, CardsPanel.CARD_WIDTH, CardsPanel.CARD_HEIGHT, null);
     }
 }
