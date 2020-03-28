@@ -24,9 +24,7 @@ public abstract class Clickable {
         this.posY = posY;
     }
 
-    public boolean containsX(int x) {
-        return (this.posX <= x) && (x <= this.posX + CardsPanel.CARD_WIDTH);
-    }
+    public abstract boolean containsX(int x);
 
     // EFFECTS: return true iff the given y value is within the bounds of the Shape
     public boolean containsY(int y) {

@@ -105,6 +105,10 @@ public class Card extends Clickable implements Comparable  {
         this.isSelected = isSelected;
     }
 
+    @Override
+    public boolean containsX(int x) {
+        return (this.posX <= x) && (x <= this.posX + CardsPanel.CARD_WIDTH);
+    }
 
     @Override
     public String toString() {

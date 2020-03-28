@@ -27,3 +27,9 @@ Features:
 - When no card is selected, lick on section (board, or each players hand) to remove last card that was added to the section.
 - To load old hand, type the name of the hand into the text input below "load" button then hit load
 - To save current hand, type name into text input under "save" button then press save
+
+## Phase 4: Task 2
+**Type Hierarchy**
+- Clickable abstract class.
+- Extended by Card, Table, Player classes.
+- Each of the classes that extends Clickable overides the containsX abstract method.
