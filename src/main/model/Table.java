@@ -17,8 +17,10 @@ public class Table extends Clickable implements Saveable {
     private ArrayList<Card> deck;
     private ArrayList<Card> usedCards;
     private ArrayList<Card> boardCards;
+    private static final int TABLE_X = 510;
     private static final int TABLE_Y = 400;
-
+    private static final int P1_X = 500;
+    private static final int P2_X = 700;
 
     public Table(Player p1, Player p2) {
         players = new ArrayList<>();
@@ -27,7 +29,10 @@ public class Table extends Clickable implements Saveable {
         boardCards = new ArrayList<>(5);
         players.add(p1);
         players.add(p2);
+        p1.setPosX(P1_X);
+        p2.setPosX(P2_X);
         numPlayers = players.size();
+        super.setPosX(TABLE_X);
         super.setPosY(TABLE_Y);
     }
 
@@ -122,7 +127,7 @@ public class Table extends Clickable implements Saveable {
         }
     }
 
-    // EFFECT: produces true if card is a valid card
+    // EFFECT: produces true if card is in the deck card
     public boolean validCard(String cv, String s) {
         for (Card c : deck) {
             if (c.getValue().equals(cv) && c.getSuit().equals(s)) {
@@ -136,8 +141,8 @@ public class Table extends Clickable implements Saveable {
         return boardCards;
     }
 
-    // EFFECTS: returns odds of each player winning hand
-    public void tableOdds() {
+    // EFFECTS: returns odds of each player winning hand pre-flop
+    public void preFlopTableOdds() {
         players.get(0).compareHand(players.get(1));
     }
 
@@ -171,6 +176,9 @@ public class Table extends Clickable implements Saveable {
     @Override
     public void save(PrintWriter printWriter) {
         String delimiter = ", ";
+        for (Player p: players) {
+            p.save(printWriter);
+        }
         for (Card c : boardCards) {
             printWriter.print(c.getValue());
             printWriter.print(delimiter);
@@ -181,7 +189,8 @@ public class Table extends Clickable implements Saveable {
         printWriter.println();
     }
 
-    //EFFECTS: draws this player's cards
+    //EFFECTS: draws the boardCards cards
+    @Override
     public void draw(Graphics g) {
         int x = posX;
         for (int i = 0; i < 5; i++) {

@@ -282,6 +282,7 @@ public class Player extends Clickable implements Saveable {
         return (this.posX <= x) && (x <= this.posX + 2 * CardsPanel.CARD_WIDTH);
     }
 
+    @Override
     //EFFECTS: draws this player's cards
     public void draw(Graphics g) {
         Image image1 = null;

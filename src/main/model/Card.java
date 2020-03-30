@@ -88,6 +88,7 @@ public class Card extends Clickable implements Comparable  {
 //        this.suit = suit;
 //    }
 
+    @Override
     //EFFECTS: draws card
     public void draw(Graphics g) {
         g.drawImage(image, posX, posY, CardsPanel.CARD_WIDTH, CardsPanel.CARD_HEIGHT, null);

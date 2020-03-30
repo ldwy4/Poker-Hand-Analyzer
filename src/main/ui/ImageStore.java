@@ -12,28 +12,21 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 
+//Manages the images of the poker analyzer and caches them for future use.
 public class ImageStore {
 
-    // one instance of this class will exist
-    // this instance will be accessed by Game.java
     private static ImageStore single = new ImageStore();
-    private HashMap images = new HashMap();  // key,value pairs that stores
-    // the three sprites (alien, ship, shot)
+    private HashMap images = new HashMap();  // key,value pairs that stores the card images
 
-    // returns the single instance of this class
+    //EFFECTS: returns the single instance of this class
     public static ImageStore get() {
         return single;
     } // get
 
-    /* getSprite
-     * input: a string specifying which sprite image is required
-     * output: a sprite instance containing an accelerated image
-     *         of the requested image
-     * purpose: to return a specific sprite
-     */
+    //EFFECTS: returns image specified by given string
     public Image getImage(String ref) {
 
-        // if the sprite is already in the HashMap
+        // if the image is already in the HashMap
         // then return it
         // Note:
         if (images.get(ref) != null) {
@@ -70,6 +63,6 @@ public class ImageStore {
         images.put(ref, image);
 
         return image;
-    } // getSprite
+    } // getImage
 
-} // SpriteStore
+} // ImageStore

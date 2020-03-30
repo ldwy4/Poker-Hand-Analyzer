@@ -32,4 +32,15 @@ Features:
 **Type Hierarchy**
 - Clickable abstract class.
 - Extended by Card, Table, Player classes.
-- Each of the classes that extends Clickable overides the containsX abstract method.
+- Each of the classes that extends Clickable overides the containsX and draw abstract methods.
+
+## Phase 4: Task 3
+**Refactoring**
+* Too much coupling between GUI & Table and Player classes.
+>* Changed constructor of table so posX of table was set in its constructor rather than GUI.
+* Issues when reset button pressed, the frame and CardsPanel refer to different tables unless helper is used.
+>* Put methods related to table in CardsPanel rather than GUI.
+>* All fields referring to Table, Player, and Card classes are now only in CardsPanel.
+* Refactored save method so that it just called save table which then called save method for each player in table.
+* Got rid of user and opponent Player fields in GUI.
+>* Used table.getPlayers() method to do changes to players instead.

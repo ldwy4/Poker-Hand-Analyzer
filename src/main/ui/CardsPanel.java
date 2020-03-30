@@ -1,56 +1,65 @@
 package ui;
 
+import exceptions.NoHandFound;
 import model.Card;
+import model.EquityCalculator;
 import model.Player;
 import model.Table;
+import persistence.Reader;
+import persistence.Writer;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
-import java.io.FilenameFilter;
+import java.io.*;
 import java.util.ArrayList;
 
 public class CardsPanel extends JPanel {
     ArrayList<Card> deck;
+    ArrayList<Card> boardCards;
     ArrayList<Player> players;
     Table table;
+    EquityCalculator equityCalculator;
     private JLabel playerLbl1;
     private JLabel playerLbl2;
     private static final String POKER_LABEL = "Player odds: ";
     public static final int CARD_WIDTH = 59;
     public static final int CARD_HEIGHT = 90;
+    private static final String HAND_FILE = "./data/hands.txt";
 
-    // File representing the folder that you select using a FileChooser
-    static final File dir = new File("/images");
+//
+//    // File representing the folder that you select using a FileChooser
+//    static final File dir = new File("/images");
+//
+//    // array of supported extensions (use a List if you prefer)
+//    static final String[] EXTENSIONS = new String[]{
+//            "C", "H", "D", "S" // and other formats you need
+//    };
+//
+//    // array of supported extensions (use a List if you prefer)
+//    static final String[] VALUES = new String[]{
+//            "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A" // and other formats you need
+//    };
+//    // filter to identify images based on their extensions
+//    static final FilenameFilter IMAGE_FILTER = new FilenameFilter() {
+//
+//        @Override
+//        public boolean accept(final File dir, final String name) {
+//            for (final String ext : EXTENSIONS) {
+//                if (name.endsWith("." + ext)) {
+//                    return (true);
+//                }
+//            }
+//            return (false);
+//        }
+//    };
 
-    // array of supported extensions (use a List if you prefer)
-    static final String[] EXTENSIONS = new String[]{
-            "C", "H", "D", "S" // and other formats you need
-    };
-
-    // array of supported extensions (use a List if you prefer)
-    static final String[] VALUES = new String[]{
-            "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A" // and other formats you need
-    };
-    // filter to identify images based on their extensions
-    static final FilenameFilter IMAGE_FILTER = new FilenameFilter() {
-
-        @Override
-        public boolean accept(final File dir, final String name) {
-            for (final String ext : EXTENSIONS) {
-                if (name.endsWith("." + ext)) {
-                    return (true);
-                }
-            }
-            return (false);
-        }
-    };
-
-    public CardsPanel(ArrayList<Card> deck, Table table) {
+    public CardsPanel(Table table) {
         super(new BorderLayout());
-        this.deck = deck;
+        this.deck = table.newDeck();
         this.players = table.getPlayers();
         this.table = table;
+        this.boardCards = table.getBoardCards();
+        equityCalculator = new EquityCalculator(boardCards, table.getPlayers(), table.getDeck());
         setPreferredSize(new Dimension(GUI.WIDTH, GUI.HEIGHT));
         playerLbl1 = new JLabel(POKER_LABEL);
         playerLbl1.setPreferredSize(new Dimension(200, 30));
@@ -92,16 +101,98 @@ public class CardsPanel extends JPanel {
         return null;
     }
 
-    public void setTable(Table table) {
-        this.table = table;
-        this.players = table.getPlayers();
+    public void setTable() {
         table.getPlayers().get(0).setPosX(500);
         table.getPlayers().get(1).setPosX(700);
         table.setPosX(510);
     }
 
-    public void setDeck(ArrayList<Card> deck) {
-        this.deck = deck;
+//    public void setDeck(ArrayList<Card> deck) {
+//        this.deck = deck;
+//    }
+
+    public void reset() {
+        table = new Table(new Player("user"), new Player("opponent"));
+        players = table.getPlayers();
+        deck = table.newDeck();
+        boardCards = table.getBoardCards();
+        equityCalculator = new EquityCalculator(boardCards, table.getPlayers(), deck);
+    }
+
+    //EFFECTS: returns the card that is selected if there is one
+    public Card findSelectedCard() {
+        for (Card c: deck) {
+            if (c.getIsSelected()) {
+                return c;
+            }
+        }
+        return null;
+    }
+
+    // EFFECTS: saves state of player and opponent hand and deck to HANDS_FILE
+    public void saveHand(String str) {
+        try {
+            table.setTableName(str);
+            Writer writer = new Writer(new File(HAND_FILE));
+            writer.write(table);
+            writer.close();
+            System.out.println("Hand has been saved to file " + HAND_FILE);
+            System.out.println("Hand name: " + table.getTableName());
+        } catch (FileNotFoundException e) {
+            System.out.println("Unable to save hand to " + HAND_FILE);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // MODIFIES: this
+    // EFFECTS: loads hand from ACCOUNTS_FILE, if that file exists;
+    public void loadHand(String file) {
+        try {
+            table = Reader.readHands(new File(HAND_FILE), file);
+            players = table.getPlayers();
+            deck = table.newDeck();
+            boardCards = table.getBoardCards();
+            equityCalculator = new EquityCalculator(boardCards, table.getPlayers(), deck);
+            System.out.println("Hand has been loaded from file " + HAND_FILE);
+            System.out.println("Hand name: " + table.getTableName());
+            calculateOdds();
+            setTable();
+            repaint();
+        } catch (IOException e) {
+            System.out.println("Error Occurred");
+        } catch (NoHandFound e) {
+            System.out.println("No hand found");
+        }
+    }
+
+    //EFFECTS: displays calculated odds
+    public void calculateOdds() {
+        boolean full = true;
+        for (Player p: table.getPlayers()) {
+            if (p.getFirstCard() == null || p.getSecondCard() == null) {
+                full = false;
+            }
+        }
+        if (full) {
+            table.preFlopTableOdds();
+            if (table.getBoardCards().size() >= 3) {
+                equityCalculator.setHandRankings();
+            }
+            this.update();
+        }
+    }
+
+    // MODIFIES: Table.boardCards
+    //EFFECTS: adds card to table boardCards
+    public void changeBoard(Card card) {
+        if (card != null && table.getBoardCards().size() < 5) {
+            table.getBoardCards().add(card);
+        } else {
+            table.getBoardCards().remove(table.getBoardCards().size() - 1);
+        }
     }
 
     // EFFECTS: updates player odds that are displayed
@@ -114,7 +205,6 @@ public class CardsPanel extends JPanel {
 
     @Override
     public void paintComponent(Graphics g) {
-        //dir.isDirectory();
         super.paintComponent(g);
         int y = 0;
         for (int j = 0; j < 2; j++) {
@@ -123,7 +213,6 @@ public class CardsPanel extends JPanel {
                 deck.get(i + 26 * j).setPosX(x);
                 deck.get(i + 26 * j).setPosY(y);
                 deck.get(i + 26 * j).draw(g);
-                //g.drawImage(deck.get(i + 26 * j).getImage(), x, y, CARD_WIDTH, CARD_HEIGHT, null);
                 if (deck.get(i + 26 * j).getIsSelected()) {
                     Graphics2D g2d = (Graphics2D) g;
                     g2d.setStroke(new BasicStroke(3));

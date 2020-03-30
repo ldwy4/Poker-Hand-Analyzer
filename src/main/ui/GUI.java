@@ -17,19 +17,12 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
+//Graphic user interface for poker analyzer
 public class GUI extends JFrame {
     public static final int WIDTH = 1800;
     public static final int HEIGHT = 800;
-    private static final String HAND_FILE = "./data/hands.txt";
-    private CardsPanel cards;
-    private Table table;
+    private CardsPanel cardPanel;
     private JPanel container;
-    Player user;
-    Player opponent;
-    ArrayList<Card> deck;
-    ArrayList<Card> usedCards;
-    ArrayList<Card> boardCards;
-    EquityCalculator equityCalculator;
     JButton save;
     JButton load;
     JButton reset;
@@ -42,7 +35,6 @@ public class GUI extends JFrame {
         container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
         setLayout(new GridBagLayout());
         add(container, new GridBagConstraints());
-        reset();
         setScreen();
         pack();
         setResizable(false);
@@ -61,10 +53,11 @@ public class GUI extends JFrame {
     }
 
     private void setScreen() {
-        cards = new CardsPanel(deck, table);
-        Graphics g = cards.getGraphics();
-        cards.setAlignmentX(Component.CENTER_ALIGNMENT);
-        container.add(cards);
+        Table table = new Table(new Player("user"), new Player("opponent"));
+        cardPanel = new CardsPanel(table);
+        Graphics g = cardPanel.getGraphics();
+        cardPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        container.add(cardPanel);
         save = new JButton("Save");
         load = new JButton("Load");
         reset = new JButton("Reset");
@@ -81,39 +74,18 @@ public class GUI extends JFrame {
     }
 
 
-
-    // Centres frame on desktop
-    // modifies: this
-    // effects:  location of frame is set so frame is centred on desktop
-    private void centreOnScreen() {
-        Dimension scrn = Toolkit.getDefaultToolkit().getScreenSize();
-        setLocation((scrn.width - getWidth()) / 2, (scrn.height - getHeight()) / 2);
-    }
-
-    private void reset() {
-        user = new Player("user");
-        opponent = new Player("opponent");
-        table = new Table(user, opponent);
-        deck = table.newDeck();
-        boardCards = table.getBoardCards();
-        equityCalculator = new EquityCalculator(boardCards, table.getPlayers(), deck);
-        user.setPosX(500);
-        opponent.setPosX(700);
-        table.setPosX(510);
-    }
-
     // if c != null, sets c.isSelected to true and all other cards isSelected to false
     private void handleMouseClicked(MouseEvent e) {
-        Card c = cards.getCardAtPoint(e.getPoint());
+        Card c = cardPanel.getCardAtPoint(e.getPoint());
         if (c != null) {
             c.setIsSelected(true);
-            for (Card card : deck) {
+            for (Card card : cardPanel.deck) {
                 if (!card.equals(c)) {
                     card.setIsSelected(false);
                 }
             }
         } else {
-            for (Card card : deck) {
+            for (Card card : cardPanel.deck) {
                 card.setIsSelected(false);
             }
         }
@@ -121,9 +93,9 @@ public class GUI extends JFrame {
     }
 
     private void handleMousePressed(MouseEvent e) {
-        Player p = cards.getPlayerAtPoint(e.getPoint());
-        Table t = cards.getTableAtPoint(e.getPoint());
-        Card card = findSelectedCard();
+        Player p = cardPanel.getPlayerAtPoint(e.getPoint());
+        Table t = cardPanel.getTableAtPoint(e.getPoint());
+        Card card = cardPanel.findSelectedCard();
         if (t == null) {
             if (p != null && card != null) {
                 if (p.getFirstCard() == null) {
@@ -139,94 +111,12 @@ public class GUI extends JFrame {
                 }
             }
         } else {
-            changeBoard(card);
+            cardPanel.changeBoard(card);
         }
-        calculateOdds();
+        cardPanel.calculateOdds();
         repaint();
     }
 
-    private void changeBoard(Card card) {
-        if (card != null && table.getBoardCards().size() < 5) {
-            table.getBoardCards().add(card);
-        } else {
-            table.getBoardCards().remove(table.getBoardCards().size() - 1);
-        }
-    }
-
-    //EFFECTS: displays calculated odds
-    private void calculateOdds() {
-        boolean full = true;
-        for (Player p: table.getPlayers()) {
-            if (p.getFirstCard() == null || p.getSecondCard() == null) {
-                full = false;
-            }
-        }
-        if (full) {
-            table.tableOdds();
-            if (table.getBoardCards().size() >= 3) {
-                equityCalculator.setHandRankings();
-            }
-            cards.update();
-        }
-    }
-
-    //EFFECTS: returns the card that is selected if there is one
-    private Card findSelectedCard() {
-        for (Card c: deck) {
-            if (c.getIsSelected()) {
-                return c;
-            }
-        }
-        return null;
-    }
-
-    // EFFECTS: saves state of player and opponent hand and deck to HANDS_FILE
-    public void saveHand(String str) {
-        try {
-            table.setTableName(str);
-            Writer writer = new Writer(new File(HAND_FILE));
-            writer.write(user);
-            writer.write(opponent);
-            writer.write(table);
-            writer.close();
-            System.out.println("Hand has been saved to file " + HAND_FILE);
-            System.out.println("Hand name: " + table.getTableName());
-        } catch (FileNotFoundException e) {
-            System.out.println("Unable to save hand to " + HAND_FILE);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    // MODIFIES: this
-    // EFFECTS: loads hand from ACCOUNTS_FILE, if that file exists;
-    public void loadHand(String file) {
-        try {
-            table = Reader.readHands(new File(HAND_FILE), file);
-            user = table.getPlayers().get(0);
-            opponent = table.getPlayers().get(1);
-            deck = table.newDeck();
-            //usedCards = pokerTable.getUsedCards();
-            boardCards = table.getBoardCards();
-            equityCalculator = new EquityCalculator(boardCards, table.getPlayers(), deck);
-            System.out.println("Hand has been loaded from file " + HAND_FILE);
-            System.out.println("Hand name: " + table.getTableName());
-            setCardsPanel();
-            calculateOdds();
-            repaint();
-        } catch (IOException e) {
-            System.out.println("Error Occurred");
-        } catch (NoHandFound e) {
-            System.out.println("No hand found");
-        }
-    }
-
-    private void setCardsPanel() {
-        cards.setDeck(deck);
-        cards.setTable(table);
-    }
 
     private class CardMouseListener extends MouseAdapter {
         // EFFECTS:Forward mouse clicked event to the active tool
@@ -241,7 +131,7 @@ public class GUI extends JFrame {
 
         // EFFECTS: translates the mouse event to current drawing's coordinate system
         private MouseEvent translateEvent(MouseEvent e) {
-            return SwingUtilities.convertMouseEvent(e.getComponent(), e, cards);
+            return SwingUtilities.convertMouseEvent(e.getComponent(), e, cardPanel);
         }
     }
 
@@ -250,7 +140,7 @@ public class GUI extends JFrame {
         //EFFECTS: either saves or shows list of saved tables based on action
         @Override
         public void actionPerformed(ActionEvent e) {
-            saveHand(fileSave.getText());
+            cardPanel.saveHand(fileSave.getText());
             fileSave.setText("");
         }
     }
@@ -260,9 +150,8 @@ public class GUI extends JFrame {
         //EFFECTS: either saves or shows list of saved tables based on action
         @Override
         public void actionPerformed(ActionEvent e) {
-            reset();
-            setCardsPanel();
-            cards.update();
+            cardPanel.reset();
+            cardPanel.update();
             repaint();
         }
     }
@@ -272,7 +161,7 @@ public class GUI extends JFrame {
         //EFFECTS: either saves or shows list of saved tables based on action
         @Override
         public void actionPerformed(ActionEvent e) {
-            loadHand(fileLoad.getText());
+            cardPanel.loadHand(fileLoad.getText());
             fileLoad.setText("");
         }
     }

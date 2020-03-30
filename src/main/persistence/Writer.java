@@ -2,6 +2,7 @@ package persistence;
 
 import java.io.*;
 
+//Saves hand to file
 public class Writer {
     private PrintWriter printWriter;
 

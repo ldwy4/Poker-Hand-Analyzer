@@ -161,7 +161,7 @@ public class PokerTest {
     @Test
     void testTableOdds() {
         table = new Table(player1, player2);
-        table.tableOdds();
+        table.preFlopTableOdds();
         assertEquals(80, player1.getOdds());
         assertEquals(20, player2.getOdds());
     }

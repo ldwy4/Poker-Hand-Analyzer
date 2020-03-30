@@ -4,6 +4,7 @@ import ui.CardsPanel;
 
 import java.awt.*;
 
+//Contains methods that are necessary for program to know if object has been clicked
 public abstract class Clickable {
     protected int posY;
     protected int posX;
@@ -25,6 +26,8 @@ public abstract class Clickable {
     }
 
     public abstract boolean containsX(int x);
+
+    public abstract void draw(Graphics g);
 
     // EFFECTS: return true iff the given y value is within the bounds of the Shape
     public boolean containsY(int y) {
