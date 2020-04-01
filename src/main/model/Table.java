@@ -61,7 +61,7 @@ public class Table extends Clickable implements Saveable {
 //    }
 
     //EFFECTS: creates new ArrayList containing all cards in new deck
-    public ArrayList<Card> newDeck() {
+    public static ArrayList<Card> newDeck() {
         ArrayList<Card> deck = new ArrayList<>();
         ArrayList<String> values = new ArrayList<>();
         ArrayList<String> suits = new ArrayList<>();

@@ -47,3 +47,7 @@ Features:
 * Refactored compareHighCard & compareLowCard in Player class.
 >* created helper method to reduce code duplication.
 * Deleted validCard in Table as duplicated functionality of other methods.
+
+##Notes
+- players field is left as Arraylist\<Player> so that the program can be scaled up to include more players at some point.
+- The lists of Card that CardsPanel, Table, and Equity contain are not the same list so that is why they all point to Card in UML Diagram.

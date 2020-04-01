@@ -16,11 +16,9 @@ import java.util.ArrayList;
 public class CardsPanel extends JPanel {
     ArrayList<Card> deck;
     ArrayList<Card> boardCards;
-    ArrayList<Player> players;
     Table table;
     EquityCalculator equityCalculator;
     private JLabel playerLbl1;
-    private JLabel playerLbl2;
     private static final String POKER_LABEL = "Player odds: ";
     public static final int CARD_WIDTH = 59;
     public static final int CARD_HEIGHT = 90;
@@ -28,22 +26,16 @@ public class CardsPanel extends JPanel {
 
     public CardsPanel(Table table) {
         super(new BorderLayout());
-        this.deck = table.newDeck();
-        this.players = table.getPlayers();
+        this.deck = Table.newDeck();
         this.table = table;
         this.boardCards = table.getBoardCards();
         equityCalculator = new EquityCalculator(boardCards, table.getPlayers(), table.getDeck());
-        setPreferredSize(new Dimension(GUI.WIDTH, 600));
+        setPreferredSize(new Dimension(GUI.WIDTH, GUI.HEIGHT));
         playerLbl1 = new JLabel(POKER_LABEL);
         playerLbl1.setPreferredSize(new Dimension(200, 30));
         playerLbl1.setHorizontalTextPosition(SwingConstants.CENTER);
         playerLbl1.setVerticalTextPosition(SwingConstants.CENTER);
-        playerLbl2 = new JLabel(POKER_LABEL);
-        playerLbl2.setPreferredSize(new Dimension(200, 30));
-        playerLbl2.setHorizontalTextPosition(SwingConstants.RIGHT);
-        playerLbl2.setVerticalTextPosition(SwingConstants.BOTTOM);
         add(playerLbl1);
-        // add(playerLbl2);
     }
 
     // EFFECTS: returns the Card at a given Point in panel, if any
@@ -58,7 +50,7 @@ public class CardsPanel extends JPanel {
 
     // EFFECTS: returns the Card at a given Point in panel, if any
     public Player getPlayerAtPoint(Point point) {
-        for (Player p : players) {
+        for (Player p : table.getPlayers()) {
             if (p.contains(point)) {
                 return p;
             }
@@ -86,8 +78,7 @@ public class CardsPanel extends JPanel {
 
     public void reset() {
         table = new Table(new Player("user"), new Player("opponent"));
-        players = table.getPlayers();
-        deck = table.newDeck();
+        deck = Table.newDeck();
         boardCards = table.getBoardCards();
         equityCalculator = new EquityCalculator(boardCards, table.getPlayers(), deck);
     }
@@ -125,8 +116,7 @@ public class CardsPanel extends JPanel {
     public void loadHand(String file) {
         try {
             table = Reader.readHands(new File(HAND_FILE), file);
-            players = table.getPlayers();
-            deck = table.newDeck();
+            deck = Table.newDeck();
             boardCards = table.getBoardCards();
             equityCalculator = new EquityCalculator(boardCards, table.getPlayers(), deck);
             System.out.println("Hand has been loaded from file " + HAND_FILE);
@@ -170,8 +160,8 @@ public class CardsPanel extends JPanel {
 
     // EFFECTS: updates player odds that are displayed
     public void update() {
-        float odd1 = players.get(0).getOdds();
-        float odd2 = players.get(1).getOdds();
+        float odd1 = table.getPlayers().get(0).getOdds();
+        float odd2 = table.getPlayers().get(1).getOdds();
         playerLbl1.setText(POKER_LABEL + "User Odds: " + odd1 + " Opponent Odds: " + odd2);
         repaint();
     }
@@ -196,7 +186,7 @@ public class CardsPanel extends JPanel {
             }
             y += 100;
         }
-        for (Player p : players) {
+        for (Player p : table.getPlayers()) {
             p.draw(g);
         }
         table.draw(g);
