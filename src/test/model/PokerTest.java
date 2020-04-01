@@ -338,12 +338,6 @@ public class PokerTest {
         assertEquals(46, table.getDeck().size());
     }
 
-    @Test
-    void testValidCard() {
-        assertTrue(table.validCard("5","H"));
-        assertFalse(table.validCard("20","H"));
-        assertFalse(table.validCard("3","g"));
-    }
 
     @Test
     void testCardToString() {

@@ -127,16 +127,6 @@ public class Table extends Clickable implements Saveable {
         }
     }
 
-    // EFFECT: produces true if card is in the deck card
-    public boolean validCard(String cv, String s) {
-        for (Card c : deck) {
-            if (c.getValue().equals(cv) && c.getSuit().equals(s)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public ArrayList<Card> getBoardCards() {
         return boardCards;
     }

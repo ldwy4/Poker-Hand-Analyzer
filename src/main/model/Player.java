@@ -222,14 +222,8 @@ public class Player extends Clickable implements Saveable {
         int p1HighCard = Integer.max(p1c1.getRawValue(), p1c2.getRawValue());
         int p2HighCard = Integer.max(p2c1.getRawValue(), p2c2.getRawValue());
         float oddsChange = 15 + 4 * (Math.abs(p1HighCard - p2HighCard) / (float)12);
-        if (p1HighCard - p2HighCard > 0) {
-            this.setOdds(50 + oddsChange);
-            other.setOdds(50 - oddsChange);
-        } else if (p1HighCard - p2HighCard < 0) {
-            this.setOdds(50 - oddsChange);
-            other.setOdds(50 + oddsChange);
-        } else {
-            this.compareLowCard(other);
+        if (!calculateDiff(p1HighCard,p2HighCard,oddsChange,other)) {
+            compareLowCard(other);
         }
     }
 
@@ -243,13 +237,23 @@ public class Player extends Clickable implements Saveable {
         int p1LowCard = Integer.min(p1c1.getRawValue(), p1c2.getRawValue());
         int p2LowCard = Integer.min(p2c1.getRawValue(), p2c2.getRawValue());
         float oddsChange = 15 + 8 * (Math.abs(p1LowCard - p2LowCard) / (float)12);
-        if (p1LowCard - p2LowCard > 0) {
-            this.setOdds(50 + oddsChange);
-            other.setOdds(50 - oddsChange);
-        } else if (p1LowCard - p2LowCard < 0) {
-            this.setOdds(50 - oddsChange);
-            other.setOdds(50 + oddsChange);
+        calculateDiff(p1LowCard,p2LowCard,oddsChange,other);
+    }
+
+    //MODIFIES: this, other
+    //EFFECTS: changes odds of each player by comparing the differences in their card values, returns false if card
+    // values are the same
+    private boolean calculateDiff(int p1, int p2, float odds, Player other) {
+        if (p1 - p2 > 0) {
+            this.setOdds(50 + odds);
+            other.setOdds(50 - odds);
+            return true;
+        } else if (p1 - p2 < 0) {
+            this.setOdds(50 - odds);
+            other.setOdds(50 + odds);
+            return true;
         }
+        return false;
     }
 
 //    // EFFECTS: returns string representation of player

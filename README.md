@@ -44,3 +44,6 @@ Features:
 * Refactored save method so that it just called save table which then called save method for each player in table.
 * Got rid of user and opponent Player fields in GUI.
 >* Used table.getPlayers() method to do changes to players instead.
+* Refactored compareHighCard & compareLowCard in Player class.
+>* created helper method to reduce code duplication.
+* Deleted validCard in Table as duplicated functionality of other methods.
