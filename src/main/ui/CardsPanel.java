@@ -26,33 +26,6 @@ public class CardsPanel extends JPanel {
     public static final int CARD_HEIGHT = 90;
     private static final String HAND_FILE = "./data/hands.txt";
 
-//
-//    // File representing the folder that you select using a FileChooser
-//    static final File dir = new File("/images");
-//
-//    // array of supported extensions (use a List if you prefer)
-//    static final String[] EXTENSIONS = new String[]{
-//            "C", "H", "D", "S" // and other formats you need
-//    };
-//
-//    // array of supported extensions (use a List if you prefer)
-//    static final String[] VALUES = new String[]{
-//            "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A" // and other formats you need
-//    };
-//    // filter to identify images based on their extensions
-//    static final FilenameFilter IMAGE_FILTER = new FilenameFilter() {
-//
-//        @Override
-//        public boolean accept(final File dir, final String name) {
-//            for (final String ext : EXTENSIONS) {
-//                if (name.endsWith("." + ext)) {
-//                    return (true);
-//                }
-//            }
-//            return (false);
-//        }
-//    };
-
     public CardsPanel(Table table) {
         super(new BorderLayout());
         this.deck = table.newDeck();
@@ -60,7 +33,7 @@ public class CardsPanel extends JPanel {
         this.table = table;
         this.boardCards = table.getBoardCards();
         equityCalculator = new EquityCalculator(boardCards, table.getPlayers(), table.getDeck());
-        setPreferredSize(new Dimension(GUI.WIDTH, GUI.HEIGHT));
+        setPreferredSize(new Dimension(GUI.WIDTH, 600));
         playerLbl1 = new JLabel(POKER_LABEL);
         playerLbl1.setPreferredSize(new Dimension(200, 30));
         playerLbl1.setHorizontalTextPosition(SwingConstants.CENTER);

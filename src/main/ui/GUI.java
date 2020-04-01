@@ -55,14 +55,13 @@ public class GUI extends JFrame {
     private void setScreen() {
         Table table = new Table(new Player("user"), new Player("opponent"));
         cardPanel = new CardsPanel(table);
-        Graphics g = cardPanel.getGraphics();
         cardPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        container.add(cardPanel);
+        container.add(cardPanel, BorderLayout.PAGE_START);
         save = new JButton("Save");
         load = new JButton("Load");
         reset = new JButton("Reset");
-        fileLoad = new JTextField();
-        fileSave = new JTextField();
+        fileLoad = new JTextField(10);
+        fileSave = new JTextField(10);
         save.addActionListener(new SaveButtonClickHandler());
         load.addActionListener(new LoadButtonClickHandler());
         reset.addActionListener(new ResetButtonClickHandler());
