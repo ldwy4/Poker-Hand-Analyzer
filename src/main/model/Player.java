@@ -6,6 +6,7 @@ import ui.ImageStore;
 
 import java.awt.*;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 
 //Represents player at table, has hand of two cards, hand rank, and the odds associated with their hand
 public class Player extends Clickable implements Saveable {
@@ -14,10 +15,12 @@ public class Player extends Clickable implements Saveable {
     private Card secondCard;
     private boolean isPair;
     private float odds;
+    private int outs;
     private int handPosition; // 0-5 , 0=low/low, 1=mid/low, 2=mid/mid, 3=high/low, 4=high/mid, 5=high/high
     private int handRank; //0-10; High Card - Royal Flush
     private int handValue; //value of high card in hand made
     private int kickerValue; //value of card in player hand that is not in total hand
+    private ArrayList<Card> hand;
     private int posX;
     public static final int POS_Y = 500;
 
@@ -25,6 +28,7 @@ public class Player extends Clickable implements Saveable {
         this.name = name;
         odds = (float)50;
         super.setPosY(POS_Y);
+        hand = new ArrayList<>();
     }
 
     public int getKickerValue() {
@@ -43,6 +47,13 @@ public class Player extends Clickable implements Saveable {
         return this.handRank;
     }
 
+    public ArrayList<Card> getHand() {
+        return hand;
+    }
+
+    public void setHand(ArrayList<Card> hand) {
+        this.hand = hand;
+    }
 
     public int getHandValue() {
         return handValue;
@@ -52,6 +63,17 @@ public class Player extends Clickable implements Saveable {
         this.handValue = handValue;
     }
 
+    public int getOuts() {
+        return outs;
+    }
+
+    public void setOuts(int outs) {
+        this.outs = outs;
+    }
+
+    public void addOut() {
+        outs++;
+    }
 
     public Card getFirstCard() {
         return firstCard;

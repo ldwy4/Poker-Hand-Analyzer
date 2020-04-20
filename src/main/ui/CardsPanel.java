@@ -131,6 +131,15 @@ public class CardsPanel extends JPanel {
         }
     }
 
+    public void addPlayer() {
+        if (table.getPlayers().size() < 5) {
+            Player player = new Player("Player " + table.getPlayers().size());
+            table.getPlayers().add(player);
+            player.setPosX(table.getPlayers().get(table.getPlayers().size() - 1).getPosX() + 200);
+            repaint();
+        }
+    }
+
     //EFFECTS: displays calculated odds
     public void calculateOdds() {
         boolean full = true;
@@ -162,7 +171,7 @@ public class CardsPanel extends JPanel {
     public void update() {
         float odd1 = table.getPlayers().get(0).getOdds();
         float odd2 = table.getPlayers().get(1).getOdds();
-        playerLbl1.setText(POKER_LABEL + "User Odds: " + odd1 + " Opponent Odds: " + odd2);
+        playerLbl1.setText(POKER_LABEL + "User Odds: " + odd1 + " Opponent Odds: " + odd2 + " Split Odds: " + equityCalculator.getSplitOdds());
         repaint();
     }
 

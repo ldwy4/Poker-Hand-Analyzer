@@ -26,6 +26,7 @@ public class GUI extends JFrame {
     JButton save;
     JButton load;
     JButton reset;
+    JButton addPlayer;
     JTextField fileLoad;
     JTextField fileSave;
 
@@ -60,11 +61,14 @@ public class GUI extends JFrame {
         save = new JButton("Save");
         load = new JButton("Load");
         reset = new JButton("Reset");
+        addPlayer = new JButton("Add Player");
         fileLoad = new JTextField(10);
         fileSave = new JTextField(10);
         save.addActionListener(new SaveButtonClickHandler());
         load.addActionListener(new LoadButtonClickHandler());
         reset.addActionListener(new ResetButtonClickHandler());
+        addPlayer.addActionListener(new AddPlayerButtonClickHandler());
+        container.add(addPlayer);
         container.add(reset);
         container.add(save);
         container.add(fileSave);
@@ -162,6 +166,15 @@ public class GUI extends JFrame {
         public void actionPerformed(ActionEvent e) {
             cardPanel.loadHand(fileLoad.getText());
             fileLoad.setText("");
+        }
+    }
+
+    private class AddPlayerButtonClickHandler implements ActionListener {
+
+        //EFFECTS: either saves or shows list of saved tables based on action
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            cardPanel.addPlayer();
         }
     }
 }

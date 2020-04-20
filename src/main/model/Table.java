@@ -127,6 +127,12 @@ public class Table extends Clickable implements Saveable {
         }
     }
 
+    // MODIFIES: this
+    // EFFECTS: adds player to the table
+    public void addPlayer(Player player) {
+        players.add(player);
+    }
+
     public ArrayList<Card> getBoardCards() {
         return boardCards;
     }
@@ -138,15 +144,6 @@ public class Table extends Clickable implements Saveable {
 
     public ArrayList<Card> getUsedCards() {
         return usedCards;
-    }
-
-    // EFFECTS: returns the odds of each player before any cards in boardCards
-    public String postFlopTableOdds() {
-        String tableOdds = "";
-        for (Player p : players) {
-            tableOdds += p.toString() + "\n";
-        }
-        return tableOdds;
     }
 
     public void setTableName(String tableName) {

@@ -279,35 +279,68 @@ public class PokerTest {
         player1.setHand("7", "4", "D", "D");
         player2.setHand("2", "5", "S", "S");
         table = new Table(player1, player2);
-        calculator = new EquityCalculator(table.getBoardCards(), table.getPlayers(), table.getDeck());
-        calculator.setHandRankings();
-//        assertEquals(100 * (float)8/52, player2.getOdds());
-//        assertEquals(100 * (float)44/52, player1.getOdds());
-        table = new Table(player2, player1);
-        calculator = new EquityCalculator(table.getBoardCards(), table.getPlayers(), table.getDeck());
-        calculator.setHandRankings();
-//        assertEquals(100 * (float)8/52, player2.getOdds());
-//        assertEquals(100 * (float)44/52, player1.getOdds());
-//        assertEquals((float)14/44, calculator.countOuts(player2, player1));
-        table.getBoardCards().add(new Card("K", "C"));
-        table.getBoardCards().add(new Card("K", "S"));
-        table.getBoardCards().add(new Card("J", "C"));
-        table.getBoardCards().add(new Card("4", "S"));
-        table.removeCard("K","C");
-        table.removeCard("K", "S");
-        table.removeCard("J", "C");
-        table.removeCard("4", "S");
+        table.getBoardCards().add(table.addCard("K", "C"));
+        table.getBoardCards().add(table.addCard("K", "S"));
+        table.getBoardCards().add(table.addCard("J", "C"));
+//        table.getBoardCards().add(table.addCard("7", "H"));
         table.removeCard("5", "S");
         table.removeCard("7", "D");
         table.removeCard("4", "D");
         table.removeCard("2", "S");
         calculator = new EquityCalculator(table.getBoardCards(), table.getPlayers(), table.getDeck());
         calculator.setHandRankings();
-        assertEquals((float)14/44, calculator.getOuts(player2, player1));
-        table.getBoardCards().add(table.addCard("7", "H"));
-        calculator.calculateOdds(player2);
-        assertEquals((float)100, player1.getOdds());
-        assertEquals((float)0, player2.getOdds());
+//        assertEquals((float) 41/44, player1.getOdds());
+//        assertEquals(0, player2.getOdds());
+//        assertEquals((float) 3/44 * 100, calculator.getSplitOdds());
+//
+        assertEquals((float)436/990, player1.getOdds());
+        assertEquals((float)249/990, player2.getOdds());
+        assertEquals((float)305/990 * 100, calculator.getSplitOdds());
+    }
+//
+    @Test
+    void testCountOuts2() {
+        player1 = new Player("me");
+        player2 = new Player("you");
+        Player player3 = new Player("other");
+        player1.setHand("7", "7", "S", "D");
+        player2.setHand("9", "5", "S", "S");
+        player3.setHand("6", "T", "S", "S");
+        table = new Table(player1, player2);
+        table.addPlayer(player3);
+        table.getBoardCards().add(new Card("6", "C"));
+        table.getBoardCards().add(new Card("7", "C"));
+        table.getBoardCards().add(new Card("9", "C"));
+        table.getBoardCards().add(new Card("8", "S"));
+        table.removeCard("6","C");
+        table.removeCard("7", "C");
+        table.removeCard("9", "C");
+        table.removeCard("8", "S");
+        table.removeCard("7", "S");
+        table.removeCard("7", "D");
+        table.removeCard("9", "S");
+        table.removeCard("5", "S");
+        table.removeCard("T", "S");
+        table.removeCard("6", "S");
+
+        calculator = new EquityCalculator(table.getBoardCards(), table.getPlayers(), table.getDeck());
+        calculator.setHandRankings();
+
+        assertEquals((float) 31/42, player3.getOdds());
+        assertEquals((float) 8/42, player1.getOdds());
+        assertEquals((float) 3/42 * 100, calculator.getSplitOdds());
+        assertEquals((float) 0, player2.getOdds());
+//        assertEquals((float) 136/990, player2.getOdds());
+//        assertEquals((float) 71/990 * 100, calculator.getSplitOdds());
+//        assertEquals((float) 783/990, player1.getOdds());
+//        assertEquals((float) 120/903, player3.getOdds());
+//        assertEquals((float) 701/903, player1.getOdds());
+//        assertEquals((float) 56/903 * 100, calculator.getSplitOdds());
+//        assertEquals((float) 26/903, player2.getOdds());
+//        table.getBoardCards().add(table.addCard("7", "H"));
+//        calculator.calculateOdds(player2);
+//        assertEquals((float)100, player1.getOdds());
+//        assertEquals((float)0, player2.getOdds());
     }
 
     @Test
@@ -355,17 +388,6 @@ public class PokerTest {
 //    void testPlayerToString() {
 //        assertEquals("me: A" + Character.toString('\u2660') + " A" + Character.toString('\u2764') + " Odds: me 50.0%", player1.toString());
 //    }
-
-    @Test
-    void testPostFlopTableOdds() {
-        String spade = Character.toString('\u2660');
-        String heart = Character.toString('\u2764');
-        String club = Character.toString('\u2663');
-        String diamond = Character.toString('\u2666');
-        String first = "me: A" + spade + " A" + heart + " Odds: me 50.0%";
-        String second = "you: 7❤ 2♣ Odds: you 50.0%";
-        assertEquals(first + "\n" + second + "\n", table.postFlopTableOdds());
-    }
 
     @Test
     void testPlayerOddsToString() {

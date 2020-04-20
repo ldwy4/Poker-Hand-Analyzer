@@ -9,9 +9,13 @@ import java.util.Collections;
 public class EquityCalculator {
     private ArrayList<Card> boardCards;
     private ArrayList<Card> deckLeft;
+    private ArrayList<Card> usedCards;
     private ArrayList<Player> players;
     private ArrayList<Integer> handValues; // raw value of high card in hand
     private ArrayList<Integer> handRanks; // hand rank in
+    private int splitOuts;
+    private float splitOdds;
+    int counter = 0;
     static final int HIGH = 0;
     static final int PAIR = 1;
     static final int TWO_PAIR = 2;
@@ -29,109 +33,149 @@ public class EquityCalculator {
         this.deckLeft = deckLeft;
         handValues = new ArrayList<>();
         handRanks = new ArrayList<>();
+        usedCards = new ArrayList<>();
+        splitOdds = 0;
+        splitOuts = 0;
     }
 
     //MODIFIES: Players p: players
     //EFFECTS: sets each players hand ranking
     public void setHandRankings() {
         for (Player p: players) {
-            ArrayList<Card> hand = new ArrayList<>();
+            p.getHand().clear();
             for (Card c: boardCards) {
-                hand.add(c);
+                p.getHand().add(c);
             }
-            hand.add(p.getFirstCard());
-            hand.add(p.getSecondCard());
-            p.setHandRank(setRank(hand, p));
+            p.getHand().add(p.getFirstCard());
+            p.getHand().add(p.getSecondCard());
+            p.setHandRank(setRank(p.getHand(), p));
         }
-        calculateOdds(compareHands());
+        calculateOdds();
     }
 
     //EFFECTS: compares hand rank of one hand to the other
-    public Player compareHands() {
-        int hr1 = players.get(0).getHankRank();
-        int hr2 = players.get(1).getHankRank();
-        int diff = hr1 - hr2;
-        if (diff > 0) {
-            return players.get(1);
-        } else if (diff < 0) {
-            return players.get(0);
-        } else {
-            if (players.get(0).getHandValue() > players.get(1).getHandValue()) {
-                return players.get(1);
-            } else {
-                return players.get(0);
-            }
-        }
-    }
+//    public Player compareHands() {
+//        int hr1 = players.get(0).getHankRank();
+//        int hr2 = players.get(1).getHankRank();
+//        int diff = hr1 - hr2;
+//        if (diff > 0) {
+//            return players.get(1);
+//        } else if (diff < 0) {
+//            return players.get(0);
+//        } else {
+//            if (players.get(0).getHandValue() > players.get(1).getHandValue()) {
+//                return players.get(1);
+//            } else {
+//                return players.get(0);
+//            }
+//        }
+//    }
 
     //MODIFIES: Player p: players
     //EFFECTS: calculates odds of each player winning
-    public void calculateOdds(Player behindPlayer) {
-        Player aheadPlayer;
-        if (behindPlayer.equals(players.get(0))) {
-            aheadPlayer = players.get(1);
-        } else {
-            aheadPlayer = players.get(0);
-        }
-        behindPlayer.setOdds(getOuts(behindPlayer, aheadPlayer) * 100);
-        for (Player p: players) {
-            if (!p.equals(behindPlayer)) {
-                p.setOdds((float)100 - behindPlayer.getOdds()); //TODO: round to two decimals
-            }
-        }
+    public void calculateOdds() {
         if (boardCards.size() == 5) {
-            behindPlayer.setOdds((float)0);
+            ArrayList<Player> topPlayers = new ArrayList<>();
+            int max = 0;
             for (Player p: players) {
-                if (!p.equals(behindPlayer)) {
-                    p.setOdds((float)100);
+                max = Math.max(max, p.getHankRank());
+            }
+            for (Player p: players) {
+                if (p.getHankRank() == max) {
+                    topPlayers.add(p);
                 }
             }
+            if (topPlayers.size() == 1) {
+                for (Player p: players) {
+                    if (p == topPlayers.get(0)) {
+                        p.setOdds(100);
+                    } else {
+                        p.setOdds(0);
+                    }
+                }
+            }
+        } else {
+            getOuts();
         }
     }
 
     //MODIFIES: bp, ap
     //EFFECTS: counts the number of cards that will make this player have the winning hand
-    public float getOuts(Player bp, Player ap) {
-        ArrayList<Card> handBp = new ArrayList<>();
-        ArrayList<Card> handAp = new ArrayList<>();
-        int outs = 0;
-        for (Card c: boardCards) {
-            handBp.add(c);
-            handAp.add(c);
+    public void getOuts() {
+//        int[] handRanks = new int[players.size()];
+//        for (int i = 0; i < players.size(); i++) {
+//            handRanks[i] = players.get(i).getHankRank();
+//        }
+        countOuts();
+        usedCards.clear();
+//        for (int i = 0; i < players.size(); i++) {
+//            players.get(i).setHandRank(handRanks[i]);
+//        }
+        if (players.get(0).getHand().size() == 5) {
+            splitOdds = 100 * splitOuts / ((float) (deckLeft.size() * (deckLeft.size() - 1)) / 2);
+            for (Player p: players) {
+                p.setOdds(p.getOuts() / ((float) (deckLeft.size() * (deckLeft.size() - 1)) / 2));
+            }
+        } else {
+            splitOdds = 100 * splitOuts / (float) deckLeft.size();
+            for (Player p : players) {
+                p.setOdds(p.getOuts() / (float) deckLeft.size());
+            }
         }
-        handBp.add(bp.getFirstCard());
-        handBp.add(bp.getSecondCard());
-        handAp.add(ap.getFirstCard());
-        handAp.add(ap.getSecondCard());
-        int behindHankRank = bp.getHankRank();
-        int aheadHankRank = ap.getHankRank();
-        outs = countOuts(handBp, handAp, bp, ap);
-        bp.setHandRank(behindHankRank);
-        ap.setHandRank(aheadHankRank);
-        return outs / (float) deckLeft.size();
     }
 
     //EFFECTS: counts the outs for the behind player
-    public int countOuts(ArrayList<Card> handBp, ArrayList<Card> handAp, Player bp, Player ap) {
-        int outs = 0;
+    public void countOuts() {
         for (Card c: deckLeft) {
-            handBp.add(c);
-            handAp.add(c);
-            int newRankA = setRank(handAp, ap);
-            int newRankB = setRank(handBp, bp);
-            if (newRankA == newRankB) {
-                if (bp.getHandValue() > ap.getHandValue()) {
-                    outs++;
-                } else if (bp.getKickerValue() > ap.getKickerValue()) {
-                    outs++;
-                }
-            } else if (newRankA < newRankB) {
-                outs++;
+            if (usedCards.contains(c)) {
+                continue;
             }
-            handBp.remove(c);
-            handAp.remove(c);
+            for (Player p: players) {
+                p.getHand().add(c);
+            }
+            if (players.get(0).getHand().size() < 7) {
+                usedCards.add(c);
+                countOuts();
+            } else {
+                compareNewHands();
+                counter++;
+            }
+            for (Player p: players) {
+                p.getHand().remove(c);
+            }
         }
-        return outs;
+    }
+
+    private void compareNewHands() {
+        ArrayList<Integer> newRanks = new ArrayList();
+        for (Player p: players) {
+            newRanks.add(setRank(p.getHand(), p));
+        }
+        int max = Collections.max(newRanks);
+        for (int j = 0; j < players.size(); j++) {
+            int sameValue = 0;
+            for (int i = 0; i < players.size(); i++) {
+                if (newRanks.get(j) == max) {
+                    if (newRanks.get(i) == max && i != j) {
+                        if (players.get(i).getHandValue() > players.get(j).getHandValue()) {
+                            break;
+                        } else if (players.get(i).getHandValue() == players.get(j).getHandValue() && players.get(i).getKickerValue() > players.get(j).getKickerValue()) {
+                            break;
+                        } else if (players.get(i).getHandValue() == players.get(j).getHandValue() && players.get(i).getKickerValue() == players.get(j).getKickerValue()) {
+                            sameValue++;
+                        }
+                    }
+                    if (i == players.size() - 1) {
+                        if (sameValue == 0) {
+                            players.get(j).addOut();
+                        }
+                    }
+                }
+            }
+            if (sameValue != 0 && j == players.size() - 1) {
+                splitOuts++;
+            }
+        }
     }
 
     //MODIFIES: p
@@ -163,6 +207,7 @@ public class EquityCalculator {
 
     //EFFECTS: returns true if hand contains royal flush
     public boolean isRoyalFlush(ArrayList<Card> hand, Player p) {
+        Collections.sort(hand);
         if (isStraightFlush(hand, p)) {
             if (p.getHandValue() == 14) {
                 return true;
@@ -209,8 +254,8 @@ public class EquityCalculator {
     //MODIFIES: p
     //EFFECTS: returns true if hand contains a full hull
     public boolean isFullHouse(ArrayList<Card> hand, Player p) {
-        for (int i = 0; i < hand.size(); i++) {
-            for (int j = i + 1; j < hand.size(); j++) {
+        for (int i = hand.size() - 1; i >= 0; i--) {
+            for (int j = i - 1; j >= 0; j--) {
                 int c1 = hand.get(i).getRawValue();
                 if (isTrips(hand, p) && c1 == hand.get(j).getRawValue() && c1 != p.getHandValue()) {
                     p.setKickerValue(c1);
@@ -245,8 +290,9 @@ public class EquityCalculator {
             }
         }
         if (suits.size() >= 5) {
-            p.setHandValue(Collections.max(suits).getRawValue());
-            p.setKickerValue(0);
+            Collections.sort(suits);
+            p.setHandValue(suits.get(suits.size() - 1).getRawValue());
+            p.setKickerValue(suits.get(suits.size() - 2).getRawValue());
             return new Pair<>(suits, true);
         }
         return new Pair<>(suits, false);
@@ -256,11 +302,11 @@ public class EquityCalculator {
     //EFFECTS: returns true if hand contains straight
     public boolean isStraight(ArrayList<Card> hand, Player p) {
         Collections.sort(hand);
-        for (int i = 0; i < hand.size(); i++) {
+        for (int i = hand.size() - 1; i >= 0; i--) {
             ArrayList<Card> straightCards = new ArrayList<>();
             straightCards.add(hand.get(i));
             int value1 = hand.get(i).getRawValue();
-            for (int j = i + 1; j < hand.size(); j++) {
+            for (int j = i - 1; j >= 0; j--) {
                 int value2 = hand.get(j).getRawValue();
                 boolean add = false;
                 if (Math.abs(value1 - value2) == 1) {
@@ -270,8 +316,8 @@ public class EquityCalculator {
                 }
             }
             if (straightCards.size() >= 5) {
-                p.setHandValue(Collections.max(straightCards).getRawValue());
-                p.setKickerValue(0);
+                p.setHandValue(straightCards.get(0).getRawValue());
+                p.setKickerValue(straightCards.get(1).getRawValue());
                 return true;
             }
         }
@@ -299,12 +345,13 @@ public class EquityCalculator {
     //MODIFIES: p
     //EFFECTS: returns true if hand contains two pair
     public boolean isTwoPair(ArrayList<Card> hand, Player p) {
-        for (int i = 0; i < hand.size(); i++) {
-            for (int j = i + 1; j < hand.size(); j++) {
+        for (int i = hand.size() - 1; i >= 0; i--) {
+            for (int j = i - 1; j >= 0; j--) {
                 int c2 = hand.get(i).getRawValue();
                 if (isPair(hand, p) && c2 != p.getHandValue() && c2 == hand.get(j).getRawValue()) {
-                    p.setKickerValue(p.getHandValue());
-                    p.setHandValue(c2);
+//                    p.setKickerValue(p.getHandValue());
+//                    p.setHandValue(c2);
+                    p.setKickerValue(c2);
                     return true;
                 }
             }
@@ -315,8 +362,8 @@ public class EquityCalculator {
     //MODIFIES: p
     //EFFECTS: returns true if hand contains a pair
     public boolean isPair(ArrayList<Card> hand, Player p) {
-        for (int i = 0; i < hand.size(); i++) {
-            for (int j = i + 1; j < hand.size(); j++) {
+        for (int i = hand.size() - 1; i >= 0; i--) {
+            for (int j = i - 1; j >= 0; j--) {
                 int c1 = hand.get(i).getRawValue();
                 if (c1 == hand.get(j).getRawValue()) {
                     p.setHandValue(c1);
@@ -358,6 +405,10 @@ public class EquityCalculator {
 
     public ArrayList<Integer> getHandRanks() {
         return handRanks;
+    }
+
+    public float getSplitOdds() {
+        return splitOdds;
     }
 
 }
