@@ -17,9 +17,9 @@ public abstract class Clickable {
         this.posX = posX;
     }
 
-//    public int getPosY() {
-//        return posY;
-//    }
+    public int getPosY() {
+        return posY;
+    }
 
     public void setPosY(int posY) {
         this.posY = posY;

@@ -19,7 +19,7 @@ public class CardsPanel extends JPanel {
     Table table;
     EquityCalculator equityCalculator;
     private JLabel playerLbl1;
-    private static final String POKER_LABEL = "Player odds: ";
+    private static final String POKER_LABEL = "<html><font color='white'>Split odds: ";
     public static final int CARD_WIDTH = 59;
     public static final int CARD_HEIGHT = 90;
     private static final String HAND_FILE = "./data/hands.txt";
@@ -30,8 +30,8 @@ public class CardsPanel extends JPanel {
         this.table = table;
         this.boardCards = table.getBoardCards();
         equityCalculator = new EquityCalculator(boardCards, table.getPlayers(), table.getDeck());
-        setPreferredSize(new Dimension(GUI.WIDTH, GUI.HEIGHT));
-        playerLbl1 = new JLabel(POKER_LABEL);
+        setPreferredSize(new Dimension(GUI.WIDTH - 200, GUI.HEIGHT));
+        playerLbl1 = new JLabel(POKER_LABEL + "</font></html>");
         playerLbl1.setPreferredSize(new Dimension(200, 30));
         playerLbl1.setHorizontalTextPosition(SwingConstants.CENTER);
         playerLbl1.setVerticalTextPosition(SwingConstants.CENTER);
@@ -131,12 +131,40 @@ public class CardsPanel extends JPanel {
         }
     }
 
+    //Modifies: this, table
+    //EFFECTS: adds new player to the table
     public void addPlayer() {
-        if (table.getPlayers().size() < 5) {
-            Player player = new Player("Player " + table.getPlayers().size());
+        if (table.getPlayers().size() < 6) {
+            Player player = new Player("Player" + table.getPlayers().size());
+            setPlayerPosition(player);
             table.getPlayers().add(player);
-            player.setPosX(table.getPlayers().get(table.getPlayers().size() - 1).getPosX() + 200);
             repaint();
+        } else {
+            System.out.println("Table is full!");
+        }
+    }
+
+    //EFFECTS: sets the position of new Player
+    private void setPlayerPosition(Player player) {
+        int lastY = table.getPlayers().get(table.getPlayers().size() - 1).getPosY();
+        int lastX = table.getPlayers().get(table.getPlayers().size() - 1).getPosX();
+        if (lastY == Player.POS_Y) {
+            player.setPosX(300);
+            player.setPosY(400);
+        } else {
+            switch (lastX) {
+                case 300:
+                    player.setPosY(280);
+                    player.setPosX(500);
+                    break;
+                case 500:
+                    player.setPosX(700);
+                    player.setPosY(280);
+                    break;
+                case 700:
+                    player.setPosX(900);
+                    player.setPosY(400);
+            }
         }
     }
 
@@ -161,7 +189,7 @@ public class CardsPanel extends JPanel {
     //EFFECTS: adds card to table boardCards
     public void changeBoard(Card card) {
         if (card != null && table.getBoardCards().size() < 5) {
-            table.getBoardCards().add(card);
+            table.getBoardCards().add(table.addCard(card.getValue(), card.getSuit()));
         } else {
             table.getBoardCards().remove(table.getBoardCards().size() - 1);
         }
@@ -169,14 +197,13 @@ public class CardsPanel extends JPanel {
 
     // EFFECTS: updates player odds that are displayed
     public void update() {
-        float odd1 = table.getPlayers().get(0).getOdds();
-        float odd2 = table.getPlayers().get(1).getOdds();
-        playerLbl1.setText(POKER_LABEL + "User Odds: " + odd1 + " Opponent Odds: " + odd2 + " Split Odds: " + equityCalculator.getSplitOdds());
+        playerLbl1.setText(POKER_LABEL + equityCalculator.getSplitOdds() + "</font></html>");
         repaint();
     }
 
     @Override
     public void paintComponent(Graphics g) {
+        Graphics2D g2d = (Graphics2D) g;
         super.paintComponent(g);
         int y = 0;
         for (int j = 0; j < 2; j++) {
@@ -186,7 +213,6 @@ public class CardsPanel extends JPanel {
                 deck.get(i + 26 * j).setPosY(y);
                 deck.get(i + 26 * j).draw(g);
                 if (deck.get(i + 26 * j).getIsSelected()) {
-                    Graphics2D g2d = (Graphics2D) g;
                     g2d.setStroke(new BasicStroke(3));
                     g2d.setColor(Color.CYAN);
                     g2d.drawRect(x, y, CARD_WIDTH, CARD_HEIGHT);
@@ -197,6 +223,8 @@ public class CardsPanel extends JPanel {
         }
         for (Player p : table.getPlayers()) {
             p.draw(g);
+            g.setColor(Color.WHITE);
+            g.drawString("Odds: " + p.getOdds(), p.getPosX() + 30, p.getPosY() + 110);
         }
         table.draw(g);
     }

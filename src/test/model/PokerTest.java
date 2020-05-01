@@ -282,20 +282,20 @@ public class PokerTest {
         table.getBoardCards().add(table.addCard("K", "C"));
         table.getBoardCards().add(table.addCard("K", "S"));
         table.getBoardCards().add(table.addCard("J", "C"));
-//        table.getBoardCards().add(table.addCard("7", "H"));
+        table.getBoardCards().add(table.addCard("7", "H"));
         table.removeCard("5", "S");
         table.removeCard("7", "D");
         table.removeCard("4", "D");
         table.removeCard("2", "S");
         calculator = new EquityCalculator(table.getBoardCards(), table.getPlayers(), table.getDeck());
         calculator.setHandRankings();
-//        assertEquals((float) 41/44, player1.getOdds());
-//        assertEquals(0, player2.getOdds());
-//        assertEquals((float) 3/44 * 100, calculator.getSplitOdds());
+        assertEquals((float) 41/44, player1.getOdds());
+        assertEquals(0, player2.getOdds());
+        assertEquals((float) 3/44 * 100, calculator.getSplitOdds());
 //
-        assertEquals((float)436/990, player1.getOdds());
-        assertEquals((float)249/990, player2.getOdds());
-        assertEquals((float)305/990 * 100, calculator.getSplitOdds());
+//        assertEquals((float)436/990, player1.getOdds());
+//        assertEquals((float)249/990, player2.getOdds());
+//        assertEquals((float)305/990 * 100, calculator.getSplitOdds());
     }
 //
     @Test
@@ -330,9 +330,6 @@ public class PokerTest {
         assertEquals((float) 8/42, player1.getOdds());
         assertEquals((float) 3/42 * 100, calculator.getSplitOdds());
         assertEquals((float) 0, player2.getOdds());
-//        assertEquals((float) 136/990, player2.getOdds());
-//        assertEquals((float) 71/990 * 100, calculator.getSplitOdds());
-//        assertEquals((float) 783/990, player1.getOdds());
 //        assertEquals((float) 120/903, player3.getOdds());
 //        assertEquals((float) 701/903, player1.getOdds());
 //        assertEquals((float) 56/903 * 100, calculator.getSplitOdds());

@@ -4,6 +4,7 @@ import ui.CardsPanel;
 import ui.ImageStore;
 
 import java.awt.*;
+import java.util.Objects;
 
 //Card that has value (Ace-King), suit, and position (low, middle, or high card)
 public class Card extends Clickable implements Comparable  {
@@ -129,6 +130,19 @@ public class Card extends Clickable implements Comparable  {
                 break;
         }
         return this.value.toUpperCase() + symbol;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Card card = (Card) o;
+        return Objects.equals(value, card.value) && Objects.equals(suit, card.suit);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value, suit);
     }
 
     @Override

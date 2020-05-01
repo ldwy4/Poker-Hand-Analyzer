@@ -42,6 +42,8 @@ public class EquityCalculator {
     //EFFECTS: sets each players hand ranking
     public void setHandRankings() {
         for (Player p: players) {
+            p.setOdds(0);
+            p.setOuts(0);
             p.getHand().clear();
             for (Card c: boardCards) {
                 p.getHand().add(c);
@@ -50,6 +52,7 @@ public class EquityCalculator {
             p.getHand().add(p.getSecondCard());
             p.setHandRank(setRank(p.getHand(), p));
         }
+        splitOuts = 0;
         calculateOdds();
     }
 
@@ -88,7 +91,7 @@ public class EquityCalculator {
             if (topPlayers.size() == 1) {
                 for (Player p: players) {
                     if (p == topPlayers.get(0)) {
-                        p.setOdds(100);
+                        p.setOdds(1);
                     } else {
                         p.setOdds(0);
                     }

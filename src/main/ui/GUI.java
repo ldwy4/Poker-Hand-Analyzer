@@ -23,6 +23,7 @@ public class GUI extends JFrame {
     public static final int HEIGHT = 800;
     private CardsPanel cardPanel;
     private JPanel container;
+    private JPanel buttons;
     JButton save;
     JButton load;
     JButton reset;
@@ -33,7 +34,8 @@ public class GUI extends JFrame {
     public GUI() {
         super("Poker Hand Analyzer");
         container = new JPanel();
-        container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
+        container.setLayout(new BorderLayout());
+        container.setBackground(Color.getHSBColor(140,100,31));
         setLayout(new GridBagLayout());
         add(container, new GridBagConstraints());
         setScreen();
@@ -57,23 +59,28 @@ public class GUI extends JFrame {
         Table table = new Table(new Player("user"), new Player("opponent"));
         cardPanel = new CardsPanel(table);
         cardPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        container.add(cardPanel, BorderLayout.PAGE_START);
+        cardPanel.setBackground(new Color(0,77,0));
         save = new JButton("Save");
         load = new JButton("Load");
         reset = new JButton("Reset");
         addPlayer = new JButton("Add Player");
         fileLoad = new JTextField(10);
+        fileLoad.setActionCommand("JTextField");
         fileSave = new JTextField(10);
         save.addActionListener(new SaveButtonClickHandler());
         load.addActionListener(new LoadButtonClickHandler());
         reset.addActionListener(new ResetButtonClickHandler());
         addPlayer.addActionListener(new AddPlayerButtonClickHandler());
-        container.add(addPlayer);
-        container.add(reset);
-        container.add(save);
-        container.add(fileSave);
-        container.add(load);
-        container.add(fileLoad);
+        buttons = new JPanel();
+        buttons.setPreferredSize(new Dimension(200, GUI.HEIGHT));
+        buttons.add(addPlayer);
+        buttons.add(reset);
+        buttons.add(save);
+        buttons.add(fileSave);
+        buttons.add(load);
+        buttons.add(fileLoad);
+        container.add(cardPanel, BorderLayout.LINE_START);
+        container.add(buttons, BorderLayout.LINE_END);
     }
 
 

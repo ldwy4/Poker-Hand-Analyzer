@@ -22,7 +22,7 @@ public class Player extends Clickable implements Saveable {
     private int kickerValue; //value of card in player hand that is not in total hand
     private ArrayList<Card> hand;
     private int posX;
-    public static final int POS_Y = 500;
+    public static final int POS_Y = 520;
 
     public Player(String name) {
         this.name = name;
@@ -169,7 +169,7 @@ public class Player extends Clickable implements Saveable {
     }
 
     public void setOdds(float odds) {
-        this.odds = odds;
+        this.odds = (float) Math.round(odds * 1000) / 1000;
     }
 
 
@@ -195,14 +195,14 @@ public class Player extends Clickable implements Saveable {
         Card p2c1 = other.getFirstCard();
         if (this.isPair && other.getIsPair()) {
             if (p1c1.getRawValue() == p2c1.getRawValue()) {
-                this.odds = 50;
-                other.setOdds(50);
+                this.odds = (float) 0.50;
+                other.setOdds((float) 0.50);
             } else if (p1c1.getRawValue() > p2c1.getRawValue()) {
-                this.odds = 82;
-                other.setOdds(100 - this.odds);
+                this.odds = (float) 0.82;
+                other.setOdds(1 - this.odds);
             } else {
-                this.odds = 100 - 82;
-                other.setOdds(100 - this.odds);
+                this.odds = 1 - (float) 0.82;
+                other.setOdds(1 - this.odds);
             }
             return true;
         }
@@ -214,20 +214,20 @@ public class Player extends Clickable implements Saveable {
     public boolean onePair(Player other) {
         if (this.isPair && !other.getIsPair()) {
             if (other.getHandPosition() > 3) {
-                this.odds = 55;
-                other.setOdds(100 - this.odds);
+                this.odds = (float) 0.55;
+                other.setOdds(1 - this.odds);
             } else {
-                other.setOdds(30 / ((float)3 / ((other.getHandPosition()) + 1)));
-                this.odds = 100 - other.getOdds();
+                other.setOdds((30 / ((float)3 / ((other.getHandPosition()) + 1))) / 100);
+                this.odds = 1 - other.getOdds();
             }
             return true;
         } else if (other.getIsPair() && !this.isPair) {
             if (this.getHandPosition() > 3) {
-                other.odds = 55;
-                this.setOdds(100 - other.getOdds());
+                other.odds = (float) 0.55;
+                this.setOdds(1 - other.getOdds());
             } else {
-                this.odds = (30 / ((float) 3 / (this.handPosition + 1)));
-                other.setOdds(100 - this.odds);
+                this.odds = ((30 / ((float) 3 / (this.handPosition + 1))) / 100);
+                other.setOdds(1 - this.odds);
             }
             return true;
         }
@@ -243,7 +243,7 @@ public class Player extends Clickable implements Saveable {
         Card p2c2 = other.getSecondCard();
         int p1HighCard = Integer.max(p1c1.getRawValue(), p1c2.getRawValue());
         int p2HighCard = Integer.max(p2c1.getRawValue(), p2c2.getRawValue());
-        float oddsChange = 15 + 4 * (Math.abs(p1HighCard - p2HighCard) / (float)12);
+        float oddsChange = (float) (0.15 + 0.04) * (Math.abs(p1HighCard - p2HighCard) / (float)12);
         if (!calculateDiff(p1HighCard,p2HighCard,oddsChange,other)) {
             compareLowCard(other);
         }
@@ -258,7 +258,7 @@ public class Player extends Clickable implements Saveable {
         Card p2c2 = other.getSecondCard();
         int p1LowCard = Integer.min(p1c1.getRawValue(), p1c2.getRawValue());
         int p2LowCard = Integer.min(p2c1.getRawValue(), p2c2.getRawValue());
-        float oddsChange = 15 + 8 * (Math.abs(p1LowCard - p2LowCard) / (float)12);
+        float oddsChange = (float) (0.15 + 0.08) * (Math.abs(p1LowCard - p2LowCard) / (float)12);
         calculateDiff(p1LowCard,p2LowCard,oddsChange,other);
     }
 
@@ -267,12 +267,12 @@ public class Player extends Clickable implements Saveable {
     // values are the same
     private boolean calculateDiff(int p1, int p2, float odds, Player other) {
         if (p1 - p2 > 0) {
-            this.setOdds(50 + odds);
-            other.setOdds(50 - odds);
+            this.setOdds((float) 0.50 + odds);
+            other.setOdds((float) 0.50 - odds);
             return true;
         } else if (p1 - p2 < 0) {
-            this.setOdds(50 - odds);
-            other.setOdds(50 + odds);
+            this.setOdds((float) 0.50 - odds);
+            other.setOdds((float) 0.50 + odds);
             return true;
         }
         return false;
@@ -323,7 +323,7 @@ public class Player extends Clickable implements Saveable {
         } else {
             image2 = secondCard.getImage();
         }
-        g.drawImage(image1, posX, POS_Y, CardsPanel.CARD_WIDTH, CardsPanel.CARD_HEIGHT, null);
-        g.drawImage(image2, posX + 60, POS_Y, CardsPanel.CARD_WIDTH, CardsPanel.CARD_HEIGHT, null);
+        g.drawImage(image1, posX, posY, CardsPanel.CARD_WIDTH, CardsPanel.CARD_HEIGHT, null);
+        g.drawImage(image2, posX + 60, posY, CardsPanel.CARD_WIDTH, CardsPanel.CARD_HEIGHT, null);
     }
 }
