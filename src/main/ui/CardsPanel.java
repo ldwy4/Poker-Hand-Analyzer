@@ -30,7 +30,7 @@ public class CardsPanel extends JPanel {
         this.table = table;
         this.boardCards = table.getBoardCards();
         equityCalculator = new EquityCalculator(boardCards, table.getPlayers(), table.getDeck());
-        setPreferredSize(new Dimension(GUI.WIDTH - 200, GUI.HEIGHT));
+        setPreferredSize(new Dimension(GUI.WIDTH - 220, GUI.HEIGHT));
         playerLbl1 = new JLabel(POKER_LABEL + "</font></html>");
         playerLbl1.setPreferredSize(new Dimension(200, 30));
         playerLbl1.setHorizontalTextPosition(SwingConstants.CENTER);
@@ -144,6 +144,17 @@ public class CardsPanel extends JPanel {
         }
     }
 
+    //Modifies: this, table
+    //EFFECTS: adds new player to the table
+    public void removePlayer() {
+        if (table.getPlayers().size() > 2) {
+            table.getPlayers().remove(table.getPlayers().size() - 1);
+            repaint();
+        } else {
+            System.out.println("Table is too empty!");
+        }
+    }
+
     //EFFECTS: sets the position of new Player
     private void setPlayerPosition(Player player) {
         int lastY = table.getPlayers().get(table.getPlayers().size() - 1).getPosY();
@@ -191,6 +202,7 @@ public class CardsPanel extends JPanel {
         if (card != null && table.getBoardCards().size() < 5) {
             table.getBoardCards().add(table.addCard(card.getValue(), card.getSuit()));
         } else {
+            table.returnCard(table.getBoardCards().get(table.getBoardCards().size() - 1));
             table.getBoardCards().remove(table.getBoardCards().size() - 1);
         }
     }
@@ -211,11 +223,16 @@ public class CardsPanel extends JPanel {
             for (int i = 0; i < 26; i++) {
                 deck.get(i + 26 * j).setPosX(x);
                 deck.get(i + 26 * j).setPosY(y);
-                deck.get(i + 26 * j).draw(g);
                 if (deck.get(i + 26 * j).getIsSelected()) {
                     g2d.setStroke(new BasicStroke(3));
                     g2d.setColor(Color.CYAN);
                     g2d.drawRect(x, y, CARD_WIDTH, CARD_HEIGHT);
+                }
+                if (!table.getDeck().contains(deck.get(i + 26 * j))) {
+                    Image image = ImageStore.get().getImage("images/freeslot.png");
+                    g.drawImage(image, x, y, CardsPanel.CARD_WIDTH, CardsPanel.CARD_HEIGHT, null);
+                } else {
+                    deck.get(i + 26 * j).draw(g);
                 }
                 x += 60;
             }
@@ -227,5 +244,9 @@ public class CardsPanel extends JPanel {
             g.drawString("Odds: " + p.getOdds(), p.getPosX() + 30, p.getPosY() + 110);
         }
         table.draw(g);
+    }
+
+    public Table getTable() {
+        return table;
     }
 }

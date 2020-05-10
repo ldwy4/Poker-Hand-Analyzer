@@ -78,28 +78,71 @@ public class EquityCalculator {
     //EFFECTS: calculates odds of each player winning
     public void calculateOdds() {
         if (boardCards.size() == 5) {
-            ArrayList<Player> topPlayers = new ArrayList<>();
-            int max = 0;
-            for (Player p: players) {
-                max = Math.max(max, p.getHankRank());
-            }
-            for (Player p: players) {
-                if (p.getHankRank() == max) {
-                    topPlayers.add(p);
-                }
-            }
+            ArrayList<Player> topPlayers = getTopPlayers();
+            findWinner(topPlayers);
             if (topPlayers.size() == 1) {
                 for (Player p: players) {
                     if (p == topPlayers.get(0)) {
-                        p.setOdds(1);
+                        p.setOdds(100);
                     } else {
                         p.setOdds(0);
                     }
                 }
+                splitOdds = 0;
+            } else {
+                for (Player p: players) {
+                    p.setOdds(0);
+                }
+                splitOdds = 100;
             }
         } else {
             getOuts();
         }
+    }
+
+    private void findWinner(ArrayList<Player> topPlayers) {
+        int max = 0;
+        ArrayList<Player> removed = new ArrayList<>();
+        for (Player p: topPlayers) {
+            max = Math.max(max, p.getHandValue());
+        }
+        for (Player p: topPlayers) {
+            if (p.getHandValue() < max) {
+                removed.add(p);
+            }
+        }
+        for (Player p: removed) {
+            topPlayers.remove(p);
+        }
+        if (topPlayers.size() != 1) {
+            max = 0;
+            removed = new ArrayList<>();
+            for (Player p: topPlayers) {
+                max = Math.max(max, p.getKickerValue());
+            }
+            for (Player p: topPlayers) {
+                if (p.getHandValue() < max) {
+                    removed.add(p);
+                }
+            }
+            for (Player p: removed) {
+                topPlayers.remove(p);
+            }
+        }
+    }
+
+    private ArrayList<Player> getTopPlayers() {
+        ArrayList<Player> topPlayers = new ArrayList<>();
+        int max = 0;
+        for (Player p: players) {
+            max = Math.max(max, p.getHankRank());
+        }
+        for (Player p: players) {
+            if (p.getHankRank() == max) {
+                topPlayers.add(p);
+            }
+        }
+        return topPlayers;
     }
 
     //MODIFIES: bp, ap
@@ -117,12 +160,12 @@ public class EquityCalculator {
         if (players.get(0).getHand().size() == 5) {
             splitOdds = 100 * splitOuts / ((float) (deckLeft.size() * (deckLeft.size() - 1)) / 2);
             for (Player p: players) {
-                p.setOdds(p.getOuts() / ((float) (deckLeft.size() * (deckLeft.size() - 1)) / 2));
+                p.setOdds(p.getOuts() * 100 / ((float) (deckLeft.size() * (deckLeft.size() - 1)) / 2));
             }
         } else {
             splitOdds = 100 * splitOuts / (float) deckLeft.size();
             for (Player p : players) {
-                p.setOdds(p.getOuts() / (float) deckLeft.size());
+                p.setOdds(p.getOuts() * 100 / (float) deckLeft.size());
             }
         }
     }

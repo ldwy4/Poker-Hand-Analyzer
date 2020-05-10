@@ -28,6 +28,7 @@ public class GUI extends JFrame {
     JButton load;
     JButton reset;
     JButton addPlayer;
+    JButton removePlayer;
     JTextField fileLoad;
     JTextField fileSave;
 
@@ -35,7 +36,7 @@ public class GUI extends JFrame {
         super("Poker Hand Analyzer");
         container = new JPanel();
         container.setLayout(new BorderLayout());
-        container.setBackground(Color.getHSBColor(140,100,31));
+        container.setBackground(new Color(0,77,0));
         setLayout(new GridBagLayout());
         add(container, new GridBagConstraints());
         setScreen();
@@ -60,10 +61,68 @@ public class GUI extends JFrame {
         cardPanel = new CardsPanel(table);
         cardPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
         cardPanel.setBackground(new Color(0,77,0));
+        createButtons();
+        addButtons();
+    }
+
+    private void addButtons() {
+        buttons = new JPanel();
+        GridBagLayout gridBagLayout = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+        buttons.setLayout(gridBagLayout);
+        JButton[] buttonArray = {addPlayer, removePlayer, save, load, reset};
+        JTextField[] textFields = {null, null, fileSave, fileLoad, null};
+        addSideMenu(buttonArray, textFields, gridBagLayout, buttons);
+        buttons.setPreferredSize(new Dimension(220, GUI.HEIGHT));
+//        buttons.add(addPlayer, c);
+//        buttons.add(removePlayer, c);
+//        buttons.add(save);
+//        buttons.add(fileSave);
+//        buttons.add(load);
+//        buttons.add(fileLoad);
+//        buttons.add(reset);
+        container.add(cardPanel, BorderLayout.LINE_START);
+        container.add(buttons, BorderLayout.LINE_END);
+    }
+
+    private void addSideMenu(JButton[] buttons,
+                                  JTextField[] textFields,
+                                  GridBagLayout gridbag,
+                                  Container container) {
+        GridBagConstraints c = new GridBagConstraints();
+        c.anchor = GridBagConstraints.PAGE_START;
+        int numLabels = buttons.length;
+        c.gridwidth = GridBagConstraints.RELATIVE; //next-to-last
+        c.fill = GridBagConstraints.NONE;      //reset to default
+        c.weightx = 0.0;                       //reset to default
+        container.add(buttons[0], c);
+        c.gridwidth = GridBagConstraints.REMAINDER;     //end row
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 1.0;
+        container.add(buttons[1], c);
+        for (int i = 2; i < numLabels - 1; i++) {
+            c.gridwidth = GridBagConstraints.RELATIVE; //next-to-last
+            c.fill = GridBagConstraints.NONE;      //reset to default
+            c.weightx = 0.5;                       //reset to default
+            container.add(buttons[i], c);
+
+            c.gridwidth = GridBagConstraints.REMAINDER;     //end row
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.weightx = 0.5;
+            container.add(textFields[i], c);
+        }
+        c.gridwidth = GridBagConstraints.REMAINDER;     //end row
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.0;
+        container.add(buttons[4], c);
+    }
+
+    private void createButtons() {
         save = new JButton("Save");
         load = new JButton("Load");
         reset = new JButton("Reset");
         addPlayer = new JButton("Add Player");
+        removePlayer = new JButton("Remove Player");
         fileLoad = new JTextField(10);
         fileLoad.setActionCommand("JTextField");
         fileSave = new JTextField(10);
@@ -71,16 +130,7 @@ public class GUI extends JFrame {
         load.addActionListener(new LoadButtonClickHandler());
         reset.addActionListener(new ResetButtonClickHandler());
         addPlayer.addActionListener(new AddPlayerButtonClickHandler());
-        buttons = new JPanel();
-        buttons.setPreferredSize(new Dimension(200, GUI.HEIGHT));
-        buttons.add(addPlayer);
-        buttons.add(reset);
-        buttons.add(save);
-        buttons.add(fileSave);
-        buttons.add(load);
-        buttons.add(fileLoad);
-        container.add(cardPanel, BorderLayout.LINE_START);
-        container.add(buttons, BorderLayout.LINE_END);
+        removePlayer.addActionListener(new RemovePlayerButtonClickHandler());
     }
 
 
@@ -109,14 +159,16 @@ public class GUI extends JFrame {
         if (t == null) {
             if (p != null && card != null) {
                 if (p.getFirstCard() == null) {
-                    p.setFirstCard(card);
+                    p.setFirstCard(cardPanel.getTable().addCard(card));
                 } else {
-                    p.setSecondCard(card);
+                    p.setSecondCard(cardPanel.getTable().addCard(card));
                 }
             } else if (p != null && card == null) {
                 if (p.getSecondCard() == null) {
+                    cardPanel.getTable().returnCard(p.getFirstCard());
                     p.setFirstCard(null);
                 } else {
+                    cardPanel.getTable().returnCard(p.getSecondCard());
                     p.setSecondCard(null);
                 }
             }
@@ -182,6 +234,15 @@ public class GUI extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             cardPanel.addPlayer();
+        }
+    }
+
+    private class RemovePlayerButtonClickHandler implements ActionListener {
+
+        //EFFECTS: either saves or shows list of saved tables based on action
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            cardPanel.removePlayer();
         }
     }
 }

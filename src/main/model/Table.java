@@ -116,6 +116,31 @@ public class Table extends Clickable implements Saveable {
         return foundCard;
     }
 
+    //REQUIRES: card to be a valid card
+    //EFFECTS: returns card with given value and suit
+    public Card addCard(Card card) {
+        for (Card c : this.deck) {
+            if (c.equals(card)) {
+                this.deck.remove(c);
+                this.usedCards.add(c);
+                break;
+            }
+        }
+        return card;
+    }
+
+    public void returnCard(Card card) {
+        if (card != null) {
+            for (Card c : this.usedCards) {
+                if (c.equals(card)) {
+                    this.deck.add(c);
+                    this.usedCards.remove(c);
+                    break;
+                }
+            }
+        }
+    }
+
     // EFFECTS: removes card from deck once dealt
     public void removeCard(String cv, String s) {
         for (Card c : this.deck) {
